@@ -1,0 +1,49 @@
+GET http://localhost:8080/items
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2026-02-01T223027.200.json
+
+###
+
+GET http://localhost:8080/items
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2026-01-28T200343.200.json
+
+###
+
+POST http://localhost:8080/items
+Content-Type: application/json
+Content-Length: 32
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{ "name": "Pen", "quantity": 3 }
+
+<> 2026-01-28T200248.200.json
+
+###
+
+GET http://localhost:8080/items
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2026-01-28T200124.200.json
+
+###
+
+GET http://localhost:8080/items
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2026-01-28T200118.200.json
+
+###
+
