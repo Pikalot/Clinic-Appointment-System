@@ -13,22 +13,29 @@ public class Patient {
     private String sex;
     private LocalDate dob;
     private EmergencyContact emergencyContact;
-    private String relationship;
+    private String contactRelationship;
+    private List<Address> addresses;
+    private List<String> emails;
+    private List<Phone> phones;
+
     @JsonIgnore
     private List<Appointment> appointments;
 
     public Patient() {}
 
-    public Patient(long mrn, String fn, String mid, String ln, String sex, LocalDate dob, EmergencyContact contact, String relationship, List<Appointment> appointments) {
+    public Patient(
+            long mrn,
+            String fn,
+            String mid,
+            String ln,
+            String sex,
+            LocalDate dob) {
         this.setMrn(mrn);
         this.setFirstName(fn);
         this.setLastName(ln);
         this.setMiddleName(mid);
         this.setSex(sex);
         this.setDob(dob);
-        this.setEmergencyContact(emergencyContact);
-        this.setRelationship(relationship);
-        this.setAppointments(appointments);
     }
 
     public long getMrn() {
@@ -87,12 +94,13 @@ public class Patient {
         this.emergencyContact = emergencyContact;
     }
 
-    public String getRelationship() {
-        return relationship;
+    public String getContactRelationship() {
+        return contactRelationship;
     }
 
-    public void setRelationship(String relationship) {
-        this.relationship = relationship;
+    public void setContactRelationship(String relationship) {
+        if (emergencyContact != null) this.contactRelationship = relationship;
+        else throw new IllegalStateException("Cannot set relationship without an emergency contact");
     }
 
     public List<Appointment> getAppointments() {
@@ -101,5 +109,29 @@ public class Patient {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public List<String> getEmails() {
+        return emails;
+    }
+
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
+    }
+
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
     }
 }

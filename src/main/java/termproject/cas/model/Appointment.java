@@ -2,7 +2,7 @@ package termproject.cas.model;
 
 public class Appointment {
 
-    private Long id;
+    private long id;
     private String status;
     private Slot availableSlot;
     private Service service;
@@ -11,7 +11,7 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, String status, Slot availSlot, Service service, Patient patient) {
+    public Appointment(long id, String status, Slot availSlot, Service service, Patient patient) {
         this.setId(id);
         this.setStatus(status);
         this.setAvailableSlot(availSlot);
