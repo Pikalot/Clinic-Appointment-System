@@ -5,17 +5,20 @@ public class Appointment {
     private long id;
     private String status;
     private Slot availableSlot;
-    private Service service;
     private Patient patient;
+    private String service;
+    private double fee;
+    private String duration;
 
     public Appointment() {
     }
 
-    public Appointment(long id, String status, Slot availSlot, Service service, Patient patient) {
+    public Appointment(
+            long id,
+            Slot availSlot,
+            Patient patient) {
         this.setId(id);
-        this.setStatus(status);
         this.setAvailableSlot(availSlot);
-        this.setService(service);
         this.setPatient(patient);
     }
 
@@ -43,11 +46,11 @@ public class Appointment {
         this.availableSlot = availableSlot;
     }
 
-    public Service getService() {
+    public String getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(String service) {
         this.service = service;
     }
 

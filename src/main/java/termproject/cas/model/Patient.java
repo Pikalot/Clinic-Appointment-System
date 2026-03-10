@@ -12,11 +12,16 @@ public class Patient {
     private String lastName;
     private String sex;
     private LocalDate dob;
-    private EmergencyContact emergencyContact;
     private String contactRelationship;
     private List<Address> addresses;
     private List<String> emails;
     private List<Phone> phones;
+
+    // Emergency Contact
+    private String firstNameEC;
+    private String middleNameEC;
+    private String lastNameEC;
+    private String phoneEC;
 
     @JsonIgnore
     private List<Appointment> appointments;
@@ -86,21 +91,13 @@ public class Patient {
         this.dob = dob;
     }
 
-    public EmergencyContact getEmergencyContact() {
-        return emergencyContact;
-    }
-
-    public void setEmergencyContact(EmergencyContact emergencyContact) {
-        this.emergencyContact = emergencyContact;
-    }
-
     public String getContactRelationship() {
         return contactRelationship;
     }
 
     public void setContactRelationship(String relationship) {
-        if (emergencyContact != null) this.contactRelationship = relationship;
-        else throw new IllegalStateException("Cannot set relationship without an emergency contact");
+        if (firstNameEC == null || firstNameEC.isBlank()) throw new IllegalStateException("Cannot set relationship without an emergency contact");
+        this.contactRelationship = relationship;
     }
 
     public List<Appointment> getAppointments() {
@@ -133,5 +130,37 @@ public class Patient {
 
     public void setPhones(List<Phone> phones) {
         this.phones = phones;
+    }
+
+    public String getFirstNameEC() {
+        return firstNameEC;
+    }
+
+    public void setFirstNameEC(String firstNameEC) {
+        this.firstNameEC = firstNameEC;
+    }
+
+    public String getMiddleNameEC() {
+        return middleNameEC;
+    }
+
+    public void setMiddleNameEC(String middleNameEC) {
+        this.middleNameEC = middleNameEC;
+    }
+
+    public String getLastNameEC() {
+        return lastNameEC;
+    }
+
+    public void setLastNameEC(String lastNameEC) {
+        this.lastNameEC = lastNameEC;
+    }
+
+    public String getPhoneEC() {
+        return phoneEC;
+    }
+
+    public void setPhoneEC(String phoneEC) {
+        this.phoneEC = phoneEC;
     }
 }
