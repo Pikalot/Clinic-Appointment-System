@@ -2,7 +2,7 @@ package termproject.cas.model;
 
 public class Appointment {
 
-    private long id;
+    private Long id;
     private String status;
     private Slot availableSlot;
     private Patient patient;
@@ -14,7 +14,7 @@ public class Appointment {
     }
 
     public Appointment(
-            long id,
+            Long id,
             Slot availSlot,
             Patient patient) {
         this.setId(id);
@@ -60,5 +60,21 @@ public class Appointment {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+
+    public void setFee(double fee) {
+        this.fee = fee;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 }

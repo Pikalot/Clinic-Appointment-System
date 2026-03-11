@@ -8,4 +8,47 @@ Content-Type: application/json
 
 { "name": "Pen", "quantity": 3 }
 
+### POST create an appointment
+POST http://localhost:8080/appointments
+Content-Type: application/json
+
+{ "id":	1009,
+  "patient": {
+    "mrn":	202,
+    "sex":	"Female",
+    "dob":	"2007-12-01",
+    "addresses":	null,
+    "contactRelationship":	null,
+    "emails":	["patient@email.com"],
+    "firstName":	"Trac",
+    "firstNameEC":	null,
+    "lastName":	"Nghiem",
+    "lastNameEC":	null,
+    "middleName":	"",
+    "middleNameEC":	null,
+    "phoneEC":	null,
+    "phones":	null
+  },
+  "availableSlot": {
+    "id":	40002,
+    "startTime":	"2026-03-25T14:00:00",
+    "endTime":	"2026-03-25T15:00:00",
+    "provider": {
+        "admin":	false,
+        "clinic":	null,
+        "email":	"test02@mail.com",
+        "firstName":	"Pikalot",
+        "id":	100,
+        "lastName":	"Ho",
+        "licenseNumber":	333334444,
+        "password":	null,
+        "type":	"Physician",
+        "username":	"provider2"
+    }
+  },
+  "duration": "30 minutes",
+  "fee": 50.00,
+  "service": "Routine Checkup",
+  "status":	"No Show"
+}
 

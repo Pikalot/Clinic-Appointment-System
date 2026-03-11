@@ -96,7 +96,6 @@ public class Patient {
     }
 
     public void setContactRelationship(String relationship) {
-        if (firstNameEC == null || firstNameEC.isBlank()) throw new IllegalStateException("Cannot set relationship without an emergency contact");
         this.contactRelationship = relationship;
     }
 
