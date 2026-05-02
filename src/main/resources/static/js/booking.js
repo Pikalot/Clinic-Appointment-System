@@ -14,7 +14,7 @@ function fetchSlots() {
                 id: slot.id,
                 date: slot.startTime.split("T")[0],        // "2026-03-02T12:00:00" → "2026-03-02"
                 time: formatTime(slot.startTime, slot.endTime), // "12:00 PM - 1:00 PM"
-                doctor: `${slot.provider.title}. ${slot.provider.lastName}`,
+                doctor: `${slot.provider.firstName} ${slot.provider.lastName}`,
                 type: slot.provider.type,
                 clinic: slot.clinic.nameAndAddress
             }));
@@ -269,8 +269,8 @@ function loadDoctors() {
         .then(data => {
             data.forEach(provider => {
                 const option = document.createElement("option");
-                option.value = `${provider.title}. ${provider.lastName}`;
-                option.textContent = `${provider.title}. ${provider.lastName}`;
+                option.value = `${provider.firstName} ${provider.lastName}`;
+                option.textContent = `${provider.firstName} ${provider.lastName}`;
                 select.appendChild(option);
             });
         });
