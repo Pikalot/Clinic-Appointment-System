@@ -28,7 +28,7 @@ public class User {
         this.setEmail(email);
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

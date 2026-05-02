@@ -20,10 +20,10 @@ public class AppointmentController {
         return service.getAllAppointments();
     }
 
-    @PostMapping
-    public Appointment createAppointment(@RequestBody Appointment appt) {
-        return service.addAppointment(appt);
-    }
+//    @PostMapping
+//    public Appointment createAppointment(@RequestBody Appointment appt) {
+//        return service.addAppointment(appt);
+//    }
 
     @PostMapping("/booking")
     public String bookAppointment(@RequestBody BookingRequest request) {

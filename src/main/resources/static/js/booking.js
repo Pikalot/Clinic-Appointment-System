@@ -197,8 +197,8 @@ function renderSlots() {
 
     const filteredSlots = slots.filter(slot => {
         const matchesDate = slot.date === selectedDate;
-        const matchesClinic = clinic === "All Clinics" || slot.clinic === clinic;
-        const matchesDoctor = doctor === "All Doctors" || slot.doctor === doctor;
+        const matchesDoctor = doctor === "" || slot.doctor === doctor;
+        const matchesClinic = clinic === "" || slot.clinic === clinic;
         return matchesDate && matchesClinic && matchesDoctor;
     });
 
@@ -261,7 +261,22 @@ function bookSlot(slotId) {
     });
 }
 
+// ── DOCTORS DROPDOWN ──
+function loadDoctors() {
+    const select = document.getElementById("doctorFilter");
+    fetch("/providers")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(provider => {
+                const option = document.createElement("option");
+                option.value = `${provider.title}. ${provider.lastName}`;
+                option.textContent = `${provider.title}. ${provider.lastName}`;
+                select.appendChild(option);
+            });
+        });
+
 // ── INIT ──
+loadDoctors();
 renderAppointments();
 setupMonthYear();
 fetchSlots();      // ✅ fetch slots from API

@@ -7,12 +7,7 @@ import java.sql.SQLException;
 public class SlotAssembler {
     public static Slot fromResultSet(ResultSet res) throws SQLException {
         // Assemble Provider
-        Provider provider = new Provider();
-        provider.setId(res.getLong("Provider_ID"));
-        provider.setLastName(res.getString("Last_name"));
-        provider.setClinicId(res.getLong("Clinic_ID"));
-        provider.setTitle(res.getString("Title"));
-        provider.setType(res.getString("Type"));
+        Provider provider = ProviderAssembler.fromResultSet(res);
 
         // Assemble Clinic
         Clinic clinic = new Clinic(

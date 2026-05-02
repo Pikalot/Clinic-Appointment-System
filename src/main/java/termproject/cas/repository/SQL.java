@@ -49,8 +49,16 @@ public class SQL {
 
     public static final String FIND_ALL_SLOTS = """
         SELECT
-            S.*,
+            S.Slot_ID,
+            S.Start_time,
+            S.End_time,
+            S.Provider_ID AS User_ID,
+            S.Status,
+            S.Version,
+            U.First_name,
+            U.Middle_name,
             U.Last_name,
+            U.Email,
             U.Clinic_ID,
             T.Type,
             T.Title,
@@ -71,7 +79,7 @@ public class SQL {
         """;
 
     public static final String FIND_SLOT_BY_PROVIDER_ID = FIND_ALL_SLOTS + """
-        WHERE S.Provider_ID = ?
+        WHERE S.User_ID = ?
         """;
 
     public static final String FIND_ALL_PATIENTS = """
@@ -88,4 +96,23 @@ public class SQL {
     public static final String FIND_PATIENT_BY_MRN = FIND_ALL_PATIENTS + """
         WHERE P.MRN = ?
         """;
+
+    public static final String FIND_ALL_PROVIDERS = """
+        SELECT
+            P.*,
+            U.First_name,
+            U.Middle_name,
+            U.Last_name,
+            U.Email,
+            U.Clinic_ID,
+            T.Type,
+            T.Title
+        FROM Providers P
+        JOIN Users U ON U.User_ID = P.User_ID 
+        JOIN Provider_Types T ON P.Type_ID = T.ID
+        """;
+
+    public static final String FIND_PROVIDER_BY_ID = FIND_ALL_PROVIDERS + """
+            WHERE P.User_ID = ?
+            """;
 }

@@ -13,7 +13,7 @@ public class Provider extends User {
     }
 
     public Provider(
-            long id,
+            Long id,
             String firstName,
             String middleName,
             String lastName,

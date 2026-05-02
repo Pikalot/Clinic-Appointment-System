@@ -18,7 +18,7 @@ public class AppointmentService {
     private final PatientRepository patientRepo;
     private final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
     private final AtomicInteger failureCount = new AtomicInteger(0);
-    private final AtomicInteger bookingCount = new AtomicInteger(0);
+    private final AtomicInteger successCount = new AtomicInteger(0);
 
     public AppointmentService(AppointmentRepository apptRepo, SlotRepository slotRepo, PatientRepository patientRepo) {
         this.apptRepo = apptRepo;
@@ -34,9 +34,9 @@ public class AppointmentService {
         return apptRepo.findByMRN(mRN);
     }
 
-    public Appointment addAppointment(Appointment appt) {
-        return apptRepo.save(appt);
-    }
+//    public Appointment addAppointment(Appointment appt) {
+//        return apptRepo.save(appt);
+//    }
 
     @Transactional
     public void bookAppointment(BookingRequest request) {
@@ -87,7 +87,7 @@ public class AppointmentService {
 
         // 4. Insert appointment only if slot update succeeded
         apptRepo.insert(appt);
-        bookingCount.incrementAndGet();
+        successCount.incrementAndGet();
         // INFO: successful booking
         logger.info("Appointment booked successfully: apptId={}, mrn={}, slotId={}",
                 appt.getId(),
@@ -128,7 +128,7 @@ public class AppointmentService {
     }
 
     // Returns the number of successful bookings
-    public int getBookingCount() {
-        return bookingCount.get();
+    public int getSuccessCount() {
+        return successCount.get();
     }
 }
