@@ -269,16 +269,35 @@ function loadDoctors() {
         .then(data => {
             data.forEach(provider => {
                 const option = document.createElement("option");
-                option.value = `${provider.title}. ${provider.lastName}`; 
+                option.value = `${provider.title}. ${provider.lastName}`;
                 option.textContent = `${provider.title}. ${provider.lastName}`;
                 select.appendChild(option);
             });
         });
 }
 
+// ── CLINICS DROPDOWN ──
+function loadClinics() {
+    const select = document.getElementById("clinicFilter");
+    fetch("/clinics")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(clinic => {
+                const option = document.createElement("option");
+                option.value = clinic.nameAndAddress;
+                option.textContent = clinic.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(err => {
+            console.error("Failed to fetch clinics:", err);
+        });
+}
+
 // ── INIT ──
+loadClinics();
 loadDoctors();
 renderAppointments();
 setupMonthYear();
-fetchSlots();      // ✅ fetch slots from API
+fetchSlots();      // fetch slots from API
 renderCalendar();  // calendar renders immediately, slots load async

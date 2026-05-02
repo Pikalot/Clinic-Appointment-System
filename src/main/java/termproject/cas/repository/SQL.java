@@ -113,6 +113,14 @@ public class SQL {
         """;
 
     public static final String FIND_PROVIDER_BY_ID = FIND_ALL_PROVIDERS + """
-            WHERE P.User_ID = ?
-            """;
+        WHERE P.User_ID = ?
+        """;
+
+    public static final String FIND_ALL_CLINICS = """
+        SELECT * FROM Clinics
+        """;
+
+    public static final String FIND_CLINIC_BY_ID = FIND_ALL_CLINICS + """
+        WHERE Clinic_ID = ?
+        """;
 }

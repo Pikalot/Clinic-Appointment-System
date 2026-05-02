@@ -10,14 +10,7 @@ public class SlotAssembler {
         Provider provider = ProviderAssembler.fromResultSet(res);
 
         // Assemble Clinic
-        Clinic clinic = new Clinic(
-                res.getInt("Clinic_ID"),
-                res.getString("Clinic_name"),
-                res.getString("Street"),
-                res.getString("City"),
-                res.getString("State"),
-                res.getString("Zip_code")
-        );
+        Clinic clinic = ClinicAssembler.fromResultSet(res);
 
         // Assemble Slot
         Slot slot = new Slot();
