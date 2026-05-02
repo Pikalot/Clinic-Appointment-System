@@ -133,6 +133,10 @@ main select {
   color: orange;
 }
 
+.appt-date {
+    font-weight: bold;
+}
+
 @media (max-width: 800px) {
   .layout {
     grid-template-columns: 1fr;

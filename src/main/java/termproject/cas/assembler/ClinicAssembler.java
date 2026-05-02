@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class ClinicAssembler {
     public static Clinic fromResultSet(ResultSet res) throws SQLException {
         // Assemble Clinic
-        return new Clinic(
+        Clinic clinic = new Clinic(
                 res.getInt("Clinic_ID"),
                 res.getString("Clinic_name"),
                 res.getString("Street"),
@@ -15,5 +15,7 @@ public class ClinicAssembler {
                 res.getString("State"),
                 res.getString("Zip_code")
         );
+        clinic.setVersion(res.getInt("Clinic_version"));
+        return clinic;
     }
 }

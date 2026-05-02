@@ -1,7 +1,6 @@
 package termproject.cas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.List;
 

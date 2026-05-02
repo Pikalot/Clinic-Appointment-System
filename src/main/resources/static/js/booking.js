@@ -12,13 +12,13 @@ function fetchSlots() {
         .then(data => {
             slots = data.map(slot => ({
                 id: slot.id,
-                date: slot.startTime.split("T")[0],        // "2026-03-02T12:00:00" → "2026-03-02"
-                time: formatTime(slot.startTime, slot.endTime), // "12:00 PM - 1:00 PM"
+                date: slot.startTime.split("T")[0],
+                time: formatTime(slot.startTime, slot.endTime),
                 doctor: `${slot.provider.firstName} ${slot.provider.lastName}`,
                 type: slot.provider.type,
                 clinic: slot.clinic.nameAndAddress
             }));
-            renderSlots(); // ✅ render after data is fetched
+            renderCalendar();
         })
         .catch(err => {
             console.error("Failed to fetch slots:", err);
@@ -30,6 +30,17 @@ function formatTime(start, end) {
     const startTime = new Date(start).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
     const endTime = new Date(end).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
     return `${startTime} - ${endTime}`;
+}
+
+// Helper to format date
+function formatDate(dateTimeStr) {
+    const date = new Date(dateTimeStr);
+    return date.toLocaleDateString("en-US", {
+        weekday: "short",   // "Thu"
+        month: "short",     // "Apr"
+        day: "numeric",     // "30"
+        year: "numeric"     // "2026"
+    }); // → "Thu, Apr 30, 2026"
 }
 
 // ── CALENDAR STATE ──
@@ -45,12 +56,12 @@ function renderAppointments() {
 
     // Not logged in → show message only
     if (!role) {
-        container.innerHTML = `<p>Please <a href="/login">log in</a> to view your appointments.</p>`;
+        container.innerHTML = `<p>Please <a href="#" onclick="toggleDrawer()">log in</a> to view your appointments.</p>`;
         return;
     }
 
     // PATIENT → fetch own appointments
-    if (role === "PATIENT") {
+    if (role === "Patient") {
         fetch(`/patients/${mrn}/appointments`)
             .then(res => res.json())
             .then(data => {
@@ -77,7 +88,7 @@ function renderAppointments() {
         return;
     }
 
-    // USER / STAFF / ADMIN → fetch all appointments
+    // STAFF / ADMIN → fetch all appointments
     fetch("/appointments")
         .then(res => res.json())
         .then(data => {
@@ -88,12 +99,15 @@ function renderAppointments() {
             data.forEach(appt => {
                 container.innerHTML += `
                     <div class="appointment-card">
+                        <div class="appt-date">
+                            📅 ${formatDate(appt.availableSlot.startTime)}
+                        </div>
                         <strong>
-                            ${appt.availableSlot.startTime} - ${appt.availableSlot.endTime},
-                            ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
+                            🕐 ${formatTime(appt.availableSlot.startTime, appt.availableSlot.endTime)}
+                            — ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
                         </strong>
-                        <p>Patient: ${appt.patient.firstName} ${appt.patient.lastName}</p>
-                        <p>Service: ${appt.service} — ${appt.status}</p>
+                        <p>👤 ${appt.patient.firstName} ${appt.patient.lastName}</p>
+                        <p>🏥 ${appt.service} — <span class="status-${appt.status.toLowerCase()}">${appt.status}</span></p>
                     </div>
                 `;
             });
@@ -162,7 +176,7 @@ function renderCalendar() {
         `;
     }
 
-    renderSlots();
+    renderSlots(); // always render slots after calendar
 }
 
 function selectDate(date) {
@@ -196,9 +210,9 @@ function renderSlots() {
     const doctor = document.getElementById("doctorFilter").value;
 
     const filteredSlots = slots.filter(slot => {
-        const matchesDate = slot.date === selectedDate;
-        const matchesDoctor = doctor === "" || slot.doctor === doctor;
-        const matchesClinic = clinic === "" || slot.clinic === clinic;
+        const matchesDate   = slot.date === selectedDate;
+        const matchesDoctor = doctor === "" || slot.doctor === doctor;   // empty string check
+        const matchesClinic = clinic === "" || slot.clinic === clinic;   // empty string check
         return matchesDate && matchesClinic && matchesDoctor;
     });
 
@@ -210,10 +224,10 @@ function renderSlots() {
     }
 
     filteredSlots.forEach(slot => {
-        // Show book button only if logged in
+        // open drawer instead of navigating to /login
         const bookBtn = role
             ? `<button class="btn-book" onclick="bookSlot(${slot.id})">Book</button>`
-            : `<a href="/login" class="btn-login-prompt">Log in to book</a>`;
+            : `<a href="#" onclick="toggleDrawer()" class="btn-login-prompt">Log in to book</a>`;
 
         container.innerHTML += `
             <div class="slot">
@@ -231,7 +245,7 @@ function renderSlots() {
 // ── BOOKING ──
 function bookSlot(slotId) {
     if (!role) {
-        window.location = "/login";
+        toggleDrawer(); // open drawer instead of navigating
         return;
     }
 
@@ -240,7 +254,7 @@ function bookSlot(slotId) {
         slotId: slotId
     };
 
-    const endpoint = role === "PATIENT"
+    const endpoint = role === "Patient"
         ? `/patients/${mrn}/booking`
         : `/appointments/booking`;
 
@@ -253,7 +267,7 @@ function bookSlot(slotId) {
     .then(data => {
         alert(data);
         renderAppointments(); // refresh appointments after booking
-        renderSlots();        // refresh slots after booking
+        fetchSlots();         // re-fetch slots to reflect new status
     })
     .catch(err => {
         console.error("Booking failed:", err);
@@ -273,6 +287,9 @@ function loadDoctors() {
                 option.textContent = `${provider.firstName} ${provider.lastName}`;
                 select.appendChild(option);
             });
+        })
+        .catch(err => {
+            console.error("Failed to fetch providers:", err);
         });
 }
 
@@ -284,7 +301,7 @@ function loadClinics() {
         .then(data => {
             data.forEach(clinic => {
                 const option = document.createElement("option");
-                option.value = clinic.nameAndAddress;
+                option.value = clinic.nameAndAddress; // must match slot.clinic
                 option.textContent = clinic.name;
                 select.appendChild(option);
             });
@@ -299,5 +316,4 @@ loadClinics();
 loadDoctors();
 renderAppointments();
 setupMonthYear();
-fetchSlots();      // fetch slots from API
-renderCalendar();  // calendar renders immediately, slots load async
+fetchSlots();   // fetches slots then renders calendar inside

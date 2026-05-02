@@ -1,8 +1,6 @@
 package termproject.cas.controller;
 
 import org.springframework.web.bind.annotation.*;
-import termproject.cas.model.Appointment;
-import termproject.cas.model.BookingRequest;
 import termproject.cas.model.Slot;
 import termproject.cas.service.SlotService;
 

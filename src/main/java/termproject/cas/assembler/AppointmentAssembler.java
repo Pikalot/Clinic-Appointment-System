@@ -18,6 +18,7 @@ public class AppointmentAssembler {
                 res.getString("Patient_Sex"),
                 res.getDate("Patient_DoB").toLocalDate()
         );
+        patient.setVersion(res.getInt("Patient_version"));
 
         // Assemble Appointment
         Appointment appt = new Appointment(

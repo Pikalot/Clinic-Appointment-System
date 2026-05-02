@@ -2,10 +2,8 @@ package termproject.cas.repository;
 
 import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.ProviderAssembler;
-import termproject.cas.assembler.SlotAssembler;
 import termproject.cas.model.Provider;
 import termproject.cas.model.Slot;
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;

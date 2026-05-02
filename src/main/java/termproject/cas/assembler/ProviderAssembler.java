@@ -16,6 +16,7 @@ public class ProviderAssembler {
         provider.setClinicId(res.getLong("Clinic_ID"));
         provider.setTitle(res.getString("Title"));
         provider.setType(res.getString("Type"));
+        provider.setVersion(res.getInt("Provider_version"));
 
         return provider;
     }

@@ -9,6 +9,7 @@ public class Clinic {
     private String city;
     private String state;
     private String zip;
+    private int version;
 
     public Clinic() {}
 
@@ -76,5 +77,13 @@ public class Clinic {
     @JsonProperty("nameAndAddress")
     public String getNameAndAddress() {
         return name.toUpperCase() + ", " + this.getAddress();
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

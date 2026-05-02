@@ -16,6 +16,13 @@
 
                 <div class="nav-right">
                     <a href="/bookappointment" class="btn-appt">Make an Appointment</a>
+
+                    <!-- ✅ Login status indicator -->
+                    <div class="user-status" id="user-status" style="display:none">
+                        <div class="user-avatar" id="user-avatar">?</div>
+                        <span class="user-role" id="user-role-label"></span>
+                    </div>
+
                     <button class="hamburger" onclick="toggleDrawer()" aria-label="Open login">
                         <span></span>
                         <span></span>
@@ -28,18 +35,42 @@
             <div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
             <div class="drawer" id="drawer">
                 <div class="drawer-header">
-                    <h2>Sign In</h2>
+                    <h2 id="drawer-title">Sign In</h2>
                     <button class="close-btn" onclick="toggleDrawer()">✕</button>
                 </div>
-                <div class="field">
-                    <label>Username</label>
-                    <input type="text" placeholder="Enter your username">
+
+                <!-- LOGIN FORM -->
+                <div id="login-form">
+                    <div class="login-tabs">
+                        <button class="tab-btn active" id="tab-patient-btn" onclick="switchLoginTab('patient')">
+                            Patient
+                        </button>
+                        <button class="tab-btn" id="tab-staff-btn" onclick="switchLoginTab('staff')">
+                            Staff
+                        </button>
+                    </div>
+                    <div class="field">
+                        <label>Username</label>
+                        <input type="text" id="login-username" placeholder="Enter your username">
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password">
+                    </div>
+                    <button class="btn-login" onclick="login()">Sign In</button>
                 </div>
-                <div class="field">
-                    <label>Password</label>
-                    <input type="password" placeholder="Enter your password">
+
+                <!-- LOGOUT FORM -->
+                <div id="logout-form" style="display:none">
+                    <div class="user-info-card">
+                        <div class="user-info-avatar" id="logout-avatar">?</div>
+                        <div>
+                            <strong id="logout-name">User</strong>
+                            <span id="logout-role"></span>
+                        </div>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">Sign Out</button>
                 </div>
-                <button class="btn-login">Sign In</button>
             </div>
         </div>
     </body>

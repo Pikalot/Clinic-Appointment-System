@@ -20,6 +20,7 @@ public class SlotAssembler {
         slot.setProvider(provider);
         slot.setStatus(res.getString("Status"));
         slot.setClinic(clinic);
+        slot.setVersion(res.getInt("Slot_version"));
 
         return slot;
     }

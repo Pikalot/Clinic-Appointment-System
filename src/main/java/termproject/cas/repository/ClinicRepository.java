@@ -2,11 +2,7 @@ package termproject.cas.repository;
 
 import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.ClinicAssembler;
-import termproject.cas.assembler.ProviderAssembler;
 import termproject.cas.model.Clinic;
-import termproject.cas.model.Provider;
-import termproject.cas.model.Slot;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
