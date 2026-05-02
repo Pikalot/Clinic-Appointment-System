@@ -1,0 +1,33 @@
+/* ── FOOTER ── */
+footer {
+    background: #111827;
+    color: rgba(255,255,255,0.6);
+    padding: 3rem 5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+/* footer logo uses global .logo, only change its color for dark background */
+footer .logo {
+    color: white;
+}
+
+footer a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--teal);
+}
+
+footer .logo:hover {
+    color: white;
+}
+
+.footer-links {
+    display: flex;
+    gap: 2rem;
+}

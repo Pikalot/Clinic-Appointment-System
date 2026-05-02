@@ -1,19 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Clinic Appointment System</title>
-</head>
-<body>
-  <h1>HOMEPAGE IS HERE</h1>
-  <div>
-      <h3>To view appointment page:
-         <a href="/bookappointment">Click here</a>
-      </h3>
-      <h3>To test /appointments endpoint:
-        <a href="/appointments">Click here</a>
-      </h3>
-  </div>
-  <p></p>
-</body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarePoint Clinic</title>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" th:href="@{/css/navbar.css}">
+        <link rel="stylesheet" th:href="@{/css/footer.css}">
+    </head>
+    <body>
+
+        <!-- NAVBAR -->
+        <div th:replace="fragments/navbar :: navbar"></div>
+
+        <!-- HERO -->
+        <div th:replace="fragments/hero :: hero"></div>
+
+        <!-- DOCTORS -->
+        <div th:replace="fragments/doctor :: doctors"></div>
+
+        <!-- TESTIMONIALS -->
+        <div th:replace="fragments/testimonials :: testimonials"></div>
+
+        <!-- FOOTER -->
+        <div th:replace="fragments/footer :: footer"></div>
+        <script src="/js/main.js"></script>
+    </body>
 </html>

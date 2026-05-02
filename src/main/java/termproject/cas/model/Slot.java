@@ -3,25 +3,29 @@ package termproject.cas.model;
 import java.time.LocalDateTime;
 
 public class Slot {
-    private long id;
+    private Long id;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Provider provider;
+    private String status;
+    private Clinic clinic;
+    private int version;
 
     public Slot() {}
 
-    public Slot(long id, LocalDateTime startTime, LocalDateTime endTime, Provider provider) {
+    public Slot(Long id, LocalDateTime startTime, LocalDateTime endTime, Provider provider, String status) {
         this.setId(id);
         this.setStartTime(startTime);
         this.setEndTime(endTime);
         this.setProvider(provider);
+        this.setStatus(status);
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -47,5 +51,29 @@ public class Slot {
 
     public void setProvider(Provider provider) {
         this.provider = provider;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Clinic getClinic() {
+        return clinic;
+    }
+
+    public void setClinic(Clinic clinic) {
+        this.clinic = clinic;
     }
 }

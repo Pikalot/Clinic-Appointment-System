@@ -1,0 +1,148 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #111;
+}
+
+main {
+  max-width: 1100px;
+  margin: 35px auto 60px;
+  padding: 0 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.appointment-card {
+  background: #d9d9d9;
+  padding: 18px;
+  margin-bottom: 25px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.appointment-card strong {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.calendar-box {
+  background: #12c7b7;
+  width: 360px;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-header select,
+.calendar-header button {
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.day-name {
+  font-weight: bold;
+  opacity: 0.6;
+}
+
+.date {
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.date:hover,
+.date.selected {
+  background: white;
+  color: #111;
+  font-weight: bold;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin: 18px 0 8px;
+  font-size: 20px;
+}
+
+main select {
+  width: 360px;
+  padding: 12px;
+  background: #d9d9d9;
+  border: none;
+  font-size: 16px;
+}
+
+.slot-list {
+  margin-top: 10px;
+  width: 360px;
+}
+
+.slot {
+  background: #020945;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.slot:hover {
+  background: #101a75;
+}
+
+.btn-login-prompt {
+  color: lightgray;
+}
+
+.btn-login-prompt:hover {
+  color: orange;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .appointment-card,
+  main select,
+  .slot-list {
+    max-width: 100%;
+    width: 100%;
+  }
+}

@@ -1,0 +1,20 @@
+/* global.css */
+:root {
+    --navy: #1a2744;
+    --teal: #2a9d8f;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo span {
+    color: var(--teal);
+}

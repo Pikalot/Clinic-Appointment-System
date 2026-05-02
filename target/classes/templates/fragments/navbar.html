@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="navbar">
+            <nav>
+                <a href="/" class="logo">
+                    <div class="logo-icon">+</div>
+                    Care<span>Point</span>
+                </a>
+
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/doctors">Doctors</a></li>
+                    <li><a href="/contacts">Contacts</a></li>
+                </ul>
+
+                <div class="nav-right">
+                    <a href="/bookappointment" class="btn-appt">Make an Appointment</a>
+                    <button class="hamburger" onclick="toggleDrawer()" aria-label="Open login">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- LOGIN DRAWER -->
+            <div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
+            <div class="drawer" id="drawer">
+                <div class="drawer-header">
+                    <h2>Sign In</h2>
+                    <button class="close-btn" onclick="toggleDrawer()">✕</button>
+                </div>
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" placeholder="Enter your username">
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter your password">
+                </div>
+                <button class="btn-login">Sign In</button>
+            </div>
+        </div>
+    </body>
+</html>

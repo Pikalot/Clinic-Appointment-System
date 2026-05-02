@@ -3,6 +3,7 @@ package termproject.cas.model;
 public class Provider extends User {
     private long licenseNumber;
     private String type;
+    private String title;
 
     public Provider() {}
 
@@ -14,15 +15,17 @@ public class Provider extends User {
     public Provider(
             long id,
             String firstName,
+            String middleName,
             String lastName,
             String username,
             String email,
-            boolean isAdmin,
             long licenseNumber,
-            String type) {
-        super(id, firstName, lastName, username, email, isAdmin);
+            String type,
+            String title) {
+        super(id, firstName, middleName, lastName, username, email);
         this.setLicenseNumber(licenseNumber);
         this.setType(type);
+        this.setTitle(title);
     }
 
     public long getLicenseNumber() {
@@ -39,5 +42,13 @@ public class Provider extends User {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

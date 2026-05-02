@@ -6,9 +6,11 @@ public class Appointment {
     private String status;
     private Slot availableSlot;
     private Patient patient;
+    private int serviceId;
     private String service;
     private double fee;
-    private String duration;
+    private int duration;
+    private int version;
 
     public Appointment() {
     }
@@ -16,10 +18,12 @@ public class Appointment {
     public Appointment(
             Long id,
             Slot availSlot,
-            Patient patient) {
+            Patient patient,
+            int version) {
         this.setId(id);
         this.setAvailableSlot(availSlot);
         this.setPatient(patient);
+        this.setVersion(version);
     }
 
     public Long getId() {
@@ -70,11 +74,27 @@ public class Appointment {
         this.fee = fee;
     }
 
-    public String getDuration() {
-        return duration;
+    public int getVersion() {
+        return version;
     }
 
-    public void setDuration(String duration) {
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 }

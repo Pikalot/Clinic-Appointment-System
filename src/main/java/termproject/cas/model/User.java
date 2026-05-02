@@ -1,30 +1,31 @@
 package termproject.cas.model;
 
 public class User {
-    private long id;
+    private Long id;
     private String firstName;
+    private String middleName;
     private String lastName;
     private String username;
     private String password;
     private String email;
-    private boolean isAdmin = false;
-    private Clinic clinic;
+    private Long clinicId;
+    private int version;
 
     public User() {}
 
     public User(
-            long id,
+            Long id,
             String firstName,
+            String middleName,
             String lastName,
             String username,
-            String email,
-            boolean isAdmin) {
+            String email) {
         this.setId(id);
         this.setFirstName(firstName);
+        this.setMiddleName(middleName);
         this.setLastName(lastName);
         this.setUsername(username);
         this.setEmail(email);
-        this.setAdmin(isAdmin);
     }
 
     public long getId() {
@@ -75,19 +76,34 @@ public class User {
         this.email = email;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public Long getClinicId() {
+        return clinicId;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setClinicId(Long clinicId) {
+        this.clinicId = clinicId;
     }
 
-    public Clinic getClinic() {
-        return clinic;
+    public int getVersion() {
+        return version;
     }
 
-    public void setClinic(Clinic clinic) {
-        this.clinic = clinic;
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getFullName() {
+        return this.getFirstName() + " "
+                + this.getMiddleName()
+                + (this.getMiddleName() == null ? "" : " ")
+                + this.getLastName();
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 }

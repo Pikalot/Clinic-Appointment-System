@@ -2,8 +2,8 @@ package termproject.cas.controller;
 
 import org.springframework.web.bind.annotation.*;
 import termproject.cas.model.Appointment;
+import termproject.cas.model.BookingRequest;
 import termproject.cas.service.AppointmentService;
-
 import java.util.List;
 
 @RestController
@@ -23,5 +23,11 @@ public class AppointmentController {
     @PostMapping
     public Appointment createAppointment(@RequestBody Appointment appt) {
         return service.addAppointment(appt);
+    }
+
+    @PostMapping("/booking")
+    public String bookAppointment(@RequestBody BookingRequest request) {
+        service.bookAppointment(request);
+        return "Appointment booked and notification sent";
     }
 }

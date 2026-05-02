@@ -6,22 +6,24 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Patient {
-    private long mrn;
+    private Long mrn;
     private String firstName;
     private String middleName;
     private String lastName;
     private String sex;
     private LocalDate dob;
-    private String contactRelationship;
     private List<Address> addresses;
     private List<String> emails;
     private List<Phone> phones;
+    private int version;
 
     // Emergency Contact
+    private Long contactId;
     private String firstNameEC;
     private String middleNameEC;
     private String lastNameEC;
     private String phoneEC;
+    private String relationship;
 
     @JsonIgnore
     private List<Appointment> appointments;
@@ -29,7 +31,7 @@ public class Patient {
     public Patient() {}
 
     public Patient(
-            long mrn,
+            Long mrn,
             String fn,
             String mid,
             String ln,
@@ -43,11 +45,11 @@ public class Patient {
         this.setDob(dob);
     }
 
-    public long getMrn() {
+    public Long getMrn() {
         return mrn;
     }
 
-    public void setMrn(long mrn) {
+    public void setMrn(Long mrn) {
         this.mrn = mrn;
     }
 
@@ -92,11 +94,11 @@ public class Patient {
     }
 
     public String getContactRelationship() {
-        return contactRelationship;
-    }
-
-    public void setContactRelationship(String relationship) {
-        this.contactRelationship = relationship;
+        return this.getFirstNameEC() + " "
+                + this.getMiddleNameEC()
+                + (this.getMiddleNameEC() == null ? "" : " ")
+                + this.getLastNameEC() + ", "
+                + this.getPhoneEC();
     }
 
     public List<Appointment> getAppointments() {
@@ -161,5 +163,29 @@ public class Patient {
 
     public void setPhoneEC(String phoneEC) {
         this.phoneEC = phoneEC;
+    }
+
+    public Long getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(Long contactId) {
+        this.contactId = contactId;
+    }
+
+    public String getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(String relationship) {
+        this.relationship = relationship;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

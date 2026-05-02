@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+    <section th:fragment="doctors" class="section">
+        <div class="section-tag">Our Team</div>
+        <h2>Meet the Doctors</h2>
+        <div class="doctors-grid">
+            <div class="doctor-card" onclick="window.location='/doctors'">
+                <div class="doctor-avatar">👨‍⚕️</div>
+                <h4>Dr. T</h4>
+                <p>Pediatrics</p>
+            </div>
+            <div class="doctor-card" onclick="window.location='/doctors'">
+                <div class="doctor-avatar">👩‍⚕️</div>
+                <h4>Dr. A</h4>
+                <p>Primary Care</p>
+            </div>
+            <div class="doctor-card" onclick="window.location='/doctors'">
+                <div class="doctor-avatar">👨‍⚕️</div>
+                <h4>Dr. B</h4>
+                <p>Primary Care</p>
+            </div>
+        </div>
+    </section>
+</body>

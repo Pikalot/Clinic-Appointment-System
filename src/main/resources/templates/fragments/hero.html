@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+    <section th:fragment="hero" class="hero">
+        <div class="hero-left">
+            <div class="hero-tag">Trusted Healthcare</div>
+            <h1>Your health,<br>our <em>priority</em></h1>
+            <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque.</p>
+            <img class="hero-image" src="/images/providers.png"></img>
+            <div class="hero-btns">
+                <a href="/doctors" class="btn-secondary">Meet Our Doctors</a>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            <div class="hero-card">
+                <h3>Make an Appointment</h3>
+                <div class="appt-toggle">
+                    <button class="toggle-btn active" onclick="setType(this, 'New')">New Visit</button>
+                    <button class="toggle-btn" onclick="setType(this, 'Follow-up')">Follow-up</button>
+                </div>
+                <div class="appt-form">
+                    <input type="text" placeholder="Your last name">
+                    <input type="email" placeholder="Your email">
+                    <input type="tel" placeholder="Your phone number">
+                    <!--                        <select>-->
+                    <!--                            <option value="" disabled selected>Select a service</option>-->
+                    <!--                            <option>Routine Checkup</option>-->
+                    <!--                            <option>Consultation</option>-->
+                    <!--                            <option>Follow-up Visit</option>-->
+                    <!--                            <option>Lab Work</option>-->
+                    <!--                        </select>-->
+                    <button class="btn-next" onclick="window.location='/bookappointment'">Next →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,157 @@
+package termproject.cas.repository;
+
+import org.springframework.stereotype.Repository;
+import termproject.cas.assembler.SlotAssembler;
+import termproject.cas.model.Slot;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
+
+@Repository
+public class SlotRepository {
+    private final DataSource dataSource;
+    private long nextId = 1L;
+
+    public SlotRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public List<Slot> findAll() {
+        String sql = SQL.FIND_ALL_SLOTS;
+        Map<Long, Slot> slotMap = new HashMap<>();
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet res = statement.executeQuery()
+        ) {
+            while (res.next()) {
+                Slot slot = SlotAssembler.fromResultSet(res);
+                slotMap.put(slot.getId(), slot);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch all slots", e);
+        }
+        return new ArrayList<>(slotMap.values());
+    }
+
+    public Slot findById(Long slotId) {
+        String sql = SQL.FIND_SLOT_BY_ID;
+        Map<Long, Slot> slotMap = new HashMap<>();
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setLong(1, slotId);
+            ResultSet res = statement.executeQuery();
+            if (res.next()) {
+                return SlotAssembler.fromResultSet(res);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch all slots", e);
+        }
+        return null;
+    }
+
+    public List<Slot> findByProviderId(Long providerId) {
+        String sql = SQL.FIND_SLOT_BY_PROVIDER_ID;
+        Map<Long, Slot> slotMap = new HashMap<>();
+
+        try (
+            Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            statement.setLong(1, providerId);
+            ResultSet res = statement.executeQuery();
+
+            while (res.next()) {
+                Slot slot = SlotAssembler.fromResultSet(res);
+                slotMap.put(slot.getId(), slot);
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch slot by provider ID", e);
+        }
+        return new ArrayList<>(slotMap.values());
+    }
+
+    public Slot save(Slot slot) {
+        if (slot.getId() == null) {
+            slot.setId(nextId++);
+        }
+        return slot;
+    }
+
+    public void insert(Slot slot) {
+        if (slot.getId() == null) {
+            slot.setId(nextId++);
+        }
+
+        String sql = """
+                INSERT INTO Availability_Slots (Slot_ID, Start_time, End_time, Provider_ID, Status, Version)
+                VALUES (?, ?, ?, ?, ?, 1);
+                """;
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setLong(1, slot.getId());
+            statement.setTimestamp(2, Timestamp.valueOf(slot.getStartTime()));
+            statement.setTimestamp(3, Timestamp.valueOf(slot.getEndTime()));
+            statement.setLong(4, slot.getProvider().getId());
+            statement.setString(5, slot.getStatus());
+
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Failed to insert available slot", e);
+        }
+    }
+
+    public boolean update(Slot slot) {
+//        Slot existing = mockData.getSlotMap().get(slot.getId());
+//        if (existing == null) return false;
+//
+//        if (existing.getVersion() != slot.getVersion()) {
+//            return false;
+//        }
+//
+//        slot.setVersion(slot.getVersion() + 1);
+//        mockData.getSlotMap().put(slot.getId(), slot);
+        return true;
+    }
+
+    /** Use it for real DB connection */
+//    public boolean update(Slot slot) {
+//        String sql = """
+//                UPDATE Availability_Slots
+//                SET
+//                    Start_time = ?,
+//                    End_time = ?,
+//                    Provider_ID = ?,
+//                    Status = ?,
+//                    version = version + 1
+//                WHERE Slot_ID = ? AND version = ?
+//                """;
+//
+//        try (
+//                Connection connection = dataSource.getConnection();
+//                PreparedStatement statement = connection.prepareStatement(sql)
+//        ) {
+//            statement.setTimestamp(1, Timestamp.valueOf(slot.getStartTime()));
+//            statement.setTimestamp(2, Timestamp.valueOf(slot.getEndTime()));
+//            statement.setLong(3, slot.getProvider().getId());
+//            statement.setString(4, slot.getStatus());
+//            statement.setLong(5, slot.getId());
+//            statement.setInt(6, slot.getVersion());
+//
+//            int rows = statement.executeUpdate();
+//            return rows > 0; // Return true if update successful
+//        }
+//        catch (SQLException e) {
+//            throw new RuntimeException("Failed to update available slot", e);
+//        }
+//    }
+}

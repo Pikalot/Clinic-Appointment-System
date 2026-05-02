@@ -72,4 +72,8 @@ public class Address {
     public void setType(String type) {
         this.type = type;
     }
+
+    public String toString() {
+        return this.street + ", " + this.city + ", " + this.state + " " + this.zipCode;
+    }
 }
