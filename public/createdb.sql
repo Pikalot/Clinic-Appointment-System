@@ -19,6 +19,7 @@ CREATE TABLE Patients (
     Last_name VARCHAR(50) NOT NULL,
     Sex ENUM('Male', 'Female'),
     DoB DATE NOT NULL,
+    Username VARCHAR(50) NOT NULL UNIQUE,
     Password_Hash VARCHAR(255) NOT NULL,
     Contact_ID BIGINT,
     Relationship ENUM('Parents', 'Spouses', 'Children', 'Domestic Partner', 'Other'),
@@ -142,7 +143,7 @@ CREATE TABLE Users (
     First_name VARCHAR(50) NOT NULL,
     Middle_name VARCHAR(50),
     Last_name VARCHAR(50) NOT NULL,
-    Username VARCHAR(50),
+    Username VARCHAR(50) UNIQUE NOT NULL,
     Password_Hash VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL,
     Clinic_ID INT NOT NULL,
@@ -237,11 +238,11 @@ CREATE TABLE Audit_Logs (
 );
 
 -- Create mock data
-INSERT INTO Patients(MRN, First_name, Middle_name, Last_name, Sex, DoB, Password_Hash) VALUES
-    ('1001', 'John', '', 'Doe','Male','2003-04-09','patient'),
-    ('1002', 'Jane', '', 'Joe','Female','2009-10-21','patient'),
-    ('1003', 'Pikalot', '', 'Ho','Male','2000-01-01','patient'),
-    ('1004', 'First', 'Mid', 'Last','Female','1990-01-01','patient');
+INSERT INTO Patients(MRN, First_name, Middle_name, Last_name, Sex, DoB, Username, Password_Hash) VALUES
+    ('1001', 'John', '', 'Doe','Male','2003-04-09','patient1','patient'),
+    ('1002', 'Jane', '', 'Joe','Female','2009-10-21','patient2','patient'),
+    ('1003', 'Pikalot', '', 'Ho','Male','2000-01-01','patient3','patient'),
+    ('1004', 'First', 'Mid', 'Last','Female','1990-01-01','patient4','patient');
 
 INSERT INTO Patient_Addresses(Address_ID, Street, City, State, Zip_code, Type, MRN) VALUES
     ('1', '1 Washington', 'San Jose', 'CA','95111','Primary','1001'),

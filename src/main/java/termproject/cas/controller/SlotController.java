@@ -3,6 +3,7 @@ package termproject.cas.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import termproject.cas.model.Slot;
+import termproject.cas.model.SlotRequest;
 import termproject.cas.service.SlotService;
 
 import java.util.List;
@@ -23,17 +24,24 @@ public class SlotController {
     }
 
     @PostMapping
-    public Slot createSlot(@RequestBody Slot slot) {
-        return service.addSlot(slot);
+    public ResponseEntity<?> createSlot(@RequestBody SlotRequest request) {
+        try {
+            service.addSlot(request);
+            return ResponseEntity.status(201).body("Slot created");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(409).body("Conflict! Unable to create slot!");
+        }
     }
 
     @PutMapping("/{slotId}/cancel")
     public ResponseEntity<?> cancelSlot(@PathVariable Long slotId) {
-        boolean success = service.cancelSlot(slotId);
-
-        if (!success) {
+        try {
+            service.cancelSlot(slotId);
+            return ResponseEntity.ok("Slot cancelled");
+        }
+        catch (RuntimeException e) {
             return ResponseEntity.status(409).body("Conflict! Slot was modified. Please refresh.");
         }
-        return ResponseEntity.ok("Slot cancelled");
     }
 }

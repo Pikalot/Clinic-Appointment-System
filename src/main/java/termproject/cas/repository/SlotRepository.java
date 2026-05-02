@@ -10,7 +10,6 @@ import java.util.*;
 @Repository
 public class SlotRepository {
     private final DataSource dataSource;
-    private long nextId = 1L;
 
     public SlotRepository(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -95,32 +94,26 @@ public class SlotRepository {
         return new ArrayList<>(slotMap.values());
     }
 
-    public Slot save(Slot slot) {
-        if (slot.getId() == null) {
-            slot.setId(nextId++);
-        }
-        return slot;
-    }
+//    public Slot save(Slot slot) {
+//        if (slot.getId() == null) {
+//            slot.setId(nextId++);
+//        }
+//        return slot;
+//    }
 
     public void insert(Slot slot) {
-        if (slot.getId() == null) {
-            slot.setId(nextId++);
-        }
-
         String sql = """
-                INSERT INTO Availability_Slots (Slot_ID, Start_time, End_time, Provider_ID, Status, Version)
-                VALUES (?, ?, ?, ?, ?, 1);
-                """;
+            INSERT INTO Availability_Slots (Start_time, End_time, Provider_ID)
+            VALUES (?, ?, ?)
+            """;
 
         try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
+            Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            statement.setLong(1, slot.getId());
-            statement.setTimestamp(2, Timestamp.valueOf(slot.getStartTime()));
-            statement.setTimestamp(3, Timestamp.valueOf(slot.getEndTime()));
-            statement.setLong(4, slot.getProvider().getId());
-            statement.setString(5, slot.getStatus());
+            statement.setTimestamp(1, Timestamp.valueOf(slot.getStartTime()));
+            statement.setTimestamp(2, Timestamp.valueOf(slot.getEndTime()));
+            statement.setLong(3, slot.getProvider().getId());
 
             statement.executeUpdate();
         }

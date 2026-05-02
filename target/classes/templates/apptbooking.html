@@ -38,6 +38,11 @@
                         <div class="calendar-grid" id="calendar"></div>
                     </div>
 
+                    <div class="selected-date-row" id="selectedDateRow" style="display:none">
+                        <span id="selectedDateLabel"></span>
+                        <button id="createSlotBtn" onclick="openCreateSlotModal()">+ New Slot</button>
+                    </div>
+
                     <label for="clinicFilter">Clinic</label>
                     <select id="clinicFilter" onchange="renderSlots()">
                         <option value="">All Clinics</option>
@@ -56,6 +61,39 @@
 
         <!-- FOOTER -->
         <div th:replace="/fragments/footer :: footer"></div>
+
+        <!-- CREATE SLOT MODAL -->
+        <div id="createSlotModal" style="display:none" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>Create New Slot</h3>
+                    <button onclick="closeCreateSlotModal()" class="modal-close">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <label for="slotDate">Date</label>
+                    <input type="date" id="slotDate" readonly />
+
+                    <label for="slotProvider">Provider</label>
+                    <select id="slotProvider"></select>
+
+                    <label for="slotStart">Start Time</label>
+                    <input type="time" id="slotStart" />
+
+                    <label for="slotDuration">Duration</label>
+                    <select id="slotDuration">
+                        <option value="60">1 hour</option>
+                        <option value="120">2 hours</option>
+                        <option value="180">3 hours</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button onclick="closeCreateSlotModal()" class="btn-cancel">Cancel</button>
+                    <button onclick="submitCreateSlot()" class="btn-confirm">Create</button>
+                </div>
+            </div>
+        </div>
 
         <script src="/js/booking.js"></script>
         <script src="/js/main.js"></script>
