@@ -100,16 +100,21 @@ public class SQL {
     public static final String FIND_ALL_PATIENTS = """
         SELECT
             P.MRN,
-            P.First_name,
-            P.Last_name,
-            P.DoB,
-            P.Sex,
-            P.Version
+            P.First_name AS Patient_FN,
+            P.Middle_name AS Patient_MN,
+            P.Last_name AS Patient_LN,
+            P.DoB AS Patient_DoB,
+            P.Sex AS Patient_Sex,
+            P.Version AS Patient_version
         FROM Patients P
         """;
 
     public static final String FIND_PATIENT_BY_MRN = FIND_ALL_PATIENTS + """
         WHERE P.MRN = ?
+        """;
+
+    public static final String FIND_PATIENT_BY_USERNAME_PASSWORD = FIND_ALL_PATIENTS + """
+        WHERE P.Username = ? AND P.Password_Hash = ?
         """;
 
     public static final String FIND_ALL_PROVIDERS = """

@@ -10,15 +10,7 @@ public class AppointmentAssembler {
         Slot slot = SlotAssembler.fromResultSet(res);
 
         // Assemble Patient
-        Patient patient = new Patient(
-                res.getLong("MRN"),
-                res.getString("Patient_FN"),
-                res.getString("Patient_MN"),
-                res.getString("Patient_LN"),
-                res.getString("Patient_Sex"),
-                res.getDate("Patient_DoB").toLocalDate()
-        );
-        patient.setVersion(res.getInt("Patient_version"));
+        Patient patient = PatientAssembler.fromResultSet(res);
 
         // Assemble Appointment
         Appointment appt = new Appointment(

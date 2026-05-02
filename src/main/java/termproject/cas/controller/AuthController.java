@@ -26,21 +26,21 @@ public class AuthController {
         this.userRepo = userRepo;
     }
 
-//    // Endpoint 1: Patient login
-//    @PostMapping("/login/patient")
-//    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
-//        // Search in Patients table only
-//        Patient patient = patientRepo.findByUsername(request.getUsername());
-//
-//        if (patient == null || !patient.getPassword().equals(request.getPassword())) {
-//            return ResponseEntity.status(401).body("Invalid credentials");
-//        }
-//
-//        Map<String, Object> res = new HashMap<>();
-//        res.put("mrn", patient.getMrn());
-//        res.put("role", "PATIENT");
-//        return ResponseEntity.ok(res);
-//    }
+    // Endpoint 1: Patient login
+    @PostMapping("/login/patient")
+    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
+        // Search in Patients table only
+        Optional<Patient> patient = patientRepo.findByUsernameAndPassword(request.getUsername(), request.getPassword());
+        System.out.println("log in patient" + patient.get().getFirstName());
+        if (patient.isEmpty()) {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("mrn", patient.get().getMrn());
+        res.put("role", "Patient");
+        return ResponseEntity.ok(res);
+    }
 
     // Endpoint 2: Staff login
     @PostMapping("/login/staff")

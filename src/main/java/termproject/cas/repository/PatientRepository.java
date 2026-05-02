@@ -1,14 +1,13 @@
 package termproject.cas.repository;
 
 import org.springframework.stereotype.Repository;
+import termproject.cas.assembler.PatientAssembler;
 import termproject.cas.model.Patient;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 
 @Repository
 public class PatientRepository {
@@ -24,6 +23,47 @@ public class PatientRepository {
 
     public List<Patient> findAll() {
         return new ArrayList<>(patientMap.values());
+    }
+
+    public Optional<Patient> findByUsernameAndPassword(String username, String password) {
+        String sql = SQL.FIND_PATIENT_BY_USERNAME_PASSWORD;
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet res = statement.executeQuery();
+
+            if (res.next()) {
+                return Optional.of(PatientAssembler.fromResultSet(res));
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch patient by username and password", e);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Patient> findByMRN(Long mRN) {
+        String sql = SQL.FIND_PATIENT_BY_MRN;
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setLong(1, mRN);
+            ResultSet res = statement.executeQuery();
+
+            if (res.next()) {
+                return Optional.of(PatientAssembler.fromResultSet(res));
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch patient by username and password", e);
+        }
+        return Optional.empty();
     }
 
     public Patient save(Patient patient) {
