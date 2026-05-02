@@ -85,6 +85,10 @@ public class SQL {
         JOIN Clinics C ON C.Clinic_ID = U.Clinic_ID
         """;
 
+    public static final String FIND_ALL_SLOTS_BY_STATUS = FIND_ALL_SLOTS + """
+        WHERE S.Status = ?
+        """;
+
     public static final String FIND_SLOT_BY_ID = FIND_ALL_SLOTS + """
         WHERE S.Slot_ID = ?
         """;

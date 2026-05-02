@@ -203,7 +203,7 @@ CREATE TABLE Availability_Slots (
     Start_time DATETIME NOT NULL,
     End_time DATETIME NOT NULL,
     Provider_ID BIGINT NOT NULL,
-    Status ENUM('Taken', 'Available') NOT NULL DEFAULT 'Available',
+    Status ENUM('Taken', 'Available', 'Cancelled') NOT NULL DEFAULT 'Available',
     Version INT NOT NULL DEFAULT 1,
     FOREIGN KEY (Provider_ID) REFERENCES Providers(User_ID)
         ON UPDATE CASCADE

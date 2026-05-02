@@ -3,6 +3,7 @@ package termproject.cas.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import termproject.cas.model.*;
 import termproject.cas.repository.SlotRepository;
 
@@ -24,6 +25,14 @@ public class SlotService {
         return slotRepo.findAll();
     }
 
+    public List<Slot> getAllAvailableSlots() {
+        return slotRepo.findByStatus("Available");
+    }
+
+    public Slot getSlotById(Long slotId) {
+        return slotRepo.findById(slotId);
+    }
+
     public List<Slot> getAllSlotsByProviderId(Long providerId) {
         return slotRepo.findByProviderId(providerId);
     }
@@ -32,6 +41,20 @@ public class SlotService {
         return slotRepo.save(slot);
     }
 
+    @Transactional
+    public boolean cancelSlot(Long slotId) {
+        logger.info("Cancel slot request: slotId={}", slotId);
+
+        Slot slot = getSlotById(slotId);
+        slot.setStatus("Cancelled");
+        boolean res = slotRepo.update(slot);
+        if (!res) {
+            logger.warn("Update conflict detected: slotId={}", slot.getId());
+        }
+
+        logger.info("Slot cancelled successfully: slotId={}", slot.getId());
+        return res;
+    }
 
     // Returns the number of failed booking attempts
     public int getFailureCount() {

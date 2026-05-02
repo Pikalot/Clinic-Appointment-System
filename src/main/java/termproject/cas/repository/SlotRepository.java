@@ -35,9 +35,28 @@ public class SlotRepository {
         return new ArrayList<>(slotMap.values());
     }
 
+    public List<Slot> findByStatus(String status) {
+        String sql = SQL.FIND_ALL_SLOTS_BY_STATUS;
+        Map<Long, Slot> slotMap = new HashMap<>();
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, status);
+            ResultSet res = statement.executeQuery();
+            while (res.next()) {
+                Slot slot = SlotAssembler.fromResultSet(res);
+                slotMap.put(slot.getId(), slot);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch all slots by status", e);
+        }
+        return new ArrayList<>(slotMap.values());
+    }
+
     public Slot findById(Long slotId) {
         String sql = SQL.FIND_SLOT_BY_ID;
-        Map<Long, Slot> slotMap = new HashMap<>();
 
         try (
                 Connection connection = dataSource.getConnection();
@@ -111,47 +130,33 @@ public class SlotRepository {
     }
 
     public boolean update(Slot slot) {
-//        Slot existing = mockData.getSlotMap().get(slot.getId());
-//        if (existing == null) return false;
-//
-//        if (existing.getVersion() != slot.getVersion()) {
-//            return false;
-//        }
-//
-//        slot.setVersion(slot.getVersion() + 1);
-//        mockData.getSlotMap().put(slot.getId(), slot);
-        return true;
-    }
+        String sql = """
+                UPDATE Availability_Slots
+                SET
+                    Start_time = ?,
+                    End_time = ?,
+                    Provider_ID = ?,
+                    Status = ?,
+                    version = version + 1
+                WHERE Slot_ID = ? AND version = ?
+                """;
 
-    /** Use it for real DB connection */
-//    public boolean update(Slot slot) {
-//        String sql = """
-//                UPDATE Availability_Slots
-//                SET
-//                    Start_time = ?,
-//                    End_time = ?,
-//                    Provider_ID = ?,
-//                    Status = ?,
-//                    version = version + 1
-//                WHERE Slot_ID = ? AND version = ?
-//                """;
-//
-//        try (
-//                Connection connection = dataSource.getConnection();
-//                PreparedStatement statement = connection.prepareStatement(sql)
-//        ) {
-//            statement.setTimestamp(1, Timestamp.valueOf(slot.getStartTime()));
-//            statement.setTimestamp(2, Timestamp.valueOf(slot.getEndTime()));
-//            statement.setLong(3, slot.getProvider().getId());
-//            statement.setString(4, slot.getStatus());
-//            statement.setLong(5, slot.getId());
-//            statement.setInt(6, slot.getVersion());
-//
-//            int rows = statement.executeUpdate();
-//            return rows > 0; // Return true if update successful
-//        }
-//        catch (SQLException e) {
-//            throw new RuntimeException("Failed to update available slot", e);
-//        }
-//    }
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setTimestamp(1, Timestamp.valueOf(slot.getStartTime()));
+            statement.setTimestamp(2, Timestamp.valueOf(slot.getEndTime()));
+            statement.setLong(3, slot.getProvider().getId());
+            statement.setString(4, slot.getStatus());
+            statement.setLong(5, slot.getId());
+            statement.setInt(6, slot.getVersion());
+
+            int rows = statement.executeUpdate();
+            return rows > 0; // Return true if update successful
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Failed to update available slot", e);
+        }
+    }
 }

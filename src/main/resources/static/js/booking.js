@@ -223,11 +223,41 @@ function renderSlots() {
         return;
     }
 
+//    filteredSlots.forEach(slot => {
+//        // open drawer instead of navigating to /login
+//        const bookBtn = role
+//            ? `<button class="btn-book" onclick="bookSlot(${slot.id})">Book</button>`
+//            : `<a href="#" onclick="toggleDrawer()" class="btn-login-prompt">Log in to book</a>`;
+//
+//        container.innerHTML += `
+//            <div class="slot">
+//                <div class="slot-info">
+//                    <strong>${slot.time}</strong> - ${slot.doctor} (${slot.type})
+//                    <br>
+//                    ${slot.clinic}
+//                </div>
+//                ${bookBtn}W
+//            </div>
+//        `;
+//    });
     filteredSlots.forEach(slot => {
-        // open drawer instead of navigating to /login
-        const bookBtn = role
-            ? `<button class="btn-book" onclick="bookSlot(${slot.id})">Book</button>`
-            : `<a href="#" onclick="toggleDrawer()" class="btn-login-prompt">Log in to book</a>`;
+        let actionBtn;
+
+        if (!role) {
+            // Not logged in → prompt login
+            actionBtn = `<a href="#" onclick="toggleDrawer()" class="btn-login-prompt">Log in to book</a>`;
+        } else if (role === "PATIENT") {
+            // Patient → can book
+            actionBtn = `<button class="btn-book" onclick="bookSlot(${slot.id})">Book</button>`;
+        } else {
+            // Staff/Provider/Admin → can manage
+            actionBtn = `
+                <div class="slot-actions">
+                    <button class="btn-edit" onclick="editSlot(${slot.id})">Edit</button>
+                    <button class="btn-delete" onclick="deleteSlot(${slot.id})">Delete</button>
+                </div>
+            `;
+        }
 
         container.innerHTML += `
             <div class="slot">
@@ -236,7 +266,7 @@ function renderSlots() {
                     <br>
                     ${slot.clinic}
                 </div>
-                ${bookBtn}
+                ${actionBtn}
             </div>
         `;
     });
@@ -309,6 +339,28 @@ function loadClinics() {
         .catch(err => {
             console.error("Failed to fetch clinics:", err);
         });
+}
+
+// ── SLOT FUNCTIONS ──
+function editSlot(slotId) {
+    // TODO: open edit modal or navigate to edit page
+    alert(`Edit slot ${slotId} — coming soon!`);
+}
+
+function deleteSlot(slotId) {
+    if (!confirm("Are you sure you want to delete this slot?")) return;
+
+    fetch(`/slots/${slotId}/cancel`, {
+        method: "PUT"
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to delete");
+        fetchSlots();
+    })
+    .catch(err => {
+        console.error("Delete failed:", err);
+        alert("Failed to delete slot.");
+    });
 }
 
 // ── INIT ──

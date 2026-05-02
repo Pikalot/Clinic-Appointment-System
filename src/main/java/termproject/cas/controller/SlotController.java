@@ -1,10 +1,12 @@
 package termproject.cas.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import termproject.cas.model.Slot;
 import termproject.cas.service.SlotService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/slots")
@@ -16,8 +18,8 @@ public class SlotController {
     }
 
     @GetMapping
-    public List<Slot> getAllSlots() {
-        return service.getAllSlots();
+    public List<Slot> getAllAvailableSlots() {
+        return service.getAllAvailableSlots();
     }
 
     @PostMapping
@@ -25,9 +27,13 @@ public class SlotController {
         return service.addSlot(slot);
     }
 
-//    @PostMapping("/booking")
-//    public String bookAppointment(@RequestBody BookingRequest request) {
-//        service.bookAppointment(request);
-//        return "Appointment booked and notification sent";
-//    }
+    @PutMapping("/{slotId}/cancel")
+    public ResponseEntity<?> cancelSlot(@PathVariable Long slotId) {
+        boolean success = service.cancelSlot(slotId);
+
+        if (!success) {
+            return ResponseEntity.status(409).body("Conflict! Slot was modified. Please refresh.");
+        }
+        return ResponseEntity.ok("Slot cancelled");
+    }
 }
