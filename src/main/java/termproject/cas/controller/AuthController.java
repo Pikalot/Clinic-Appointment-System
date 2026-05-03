@@ -31,7 +31,7 @@ public class AuthController {
     public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
         // Search in Patients table only
         Optional<Patient> patient = patientRepo.findByUsernameAndPassword(request.getUsername(), request.getPassword());
-        System.out.println("log in patient" + patient.get().getFirstName());
+
         if (patient.isEmpty()) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
@@ -39,6 +39,8 @@ public class AuthController {
         Map<String, Object> res = new HashMap<>();
         res.put("mrn", patient.get().getMrn());
         res.put("role", "Patient");
+        res.put("firstName", patient.get().getFirstName());
+
         return ResponseEntity.ok(res);
     }
 
@@ -53,10 +55,13 @@ public class AuthController {
         }
         Long id = user.get().getId();
         String role = userRepo.findRoleById(id);
+        String firstName = user.get().getFirstName();
 
         Map<String, Object> res = new HashMap<>();
         res.put("userId", id);
         res.put("role", role);
+        res.put("firstName", firstName);
+
         return ResponseEntity.ok(res);
     }
 }
