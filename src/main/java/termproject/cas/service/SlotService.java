@@ -10,6 +10,7 @@ import termproject.cas.repository.SlotRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -33,7 +34,7 @@ public class SlotService {
         return slotRepo.findByStatus("Available");
     }
 
-    public Slot getSlotById(Long slotId) {
+    public Optional<Slot> getSlotById(Long slotId) {
         return slotRepo.findById(slotId);
     }
 
@@ -51,8 +52,8 @@ public class SlotService {
             startTime, endTime, providerId);
 
         // 1. Create a provider
-        Provider provider = providerRepo.findById(providerId);
-        if (provider == null) {
+        Optional<Provider> provider = providerRepo.findById(providerId);
+        if (provider.isEmpty()) {
             failureCount.incrementAndGet();
             logger.warn("Provider not found: providerId={}", providerId);
             throw new RuntimeException("Provider not found");
@@ -62,7 +63,7 @@ public class SlotService {
         Slot slot = new Slot();
         slot.setStartTime(startTime);
         slot.setEndTime(endTime);
-        slot.setProvider(provider);
+        slot.setProvider(provider.get());
 
         // 3. Insert slot
         slotRepo.insert(slot);
@@ -75,14 +76,20 @@ public class SlotService {
     public void cancelSlot(Long slotId) {
         logger.info("Cancel slot request received: slotId={}", slotId);
 
-        Slot slot = getSlotById(slotId);
-        slot.setStatus("Cancelled");
-        boolean res = slotRepo.update(slot);
-        if (!res) {
-            logger.warn("Update conflict detected: slotId={}", slot.getId());
+        Optional<Slot> slot = getSlotById(slotId);
+        if (slot.isEmpty()) {
+            logger.warn("Slot not found: slotId={}", slotId);
+            throw new RuntimeException("Slot not found");
         }
 
-        logger.info("Slot cancelled successfully: slotId={}", slot.getId());
+        Slot sl = slot.get();
+        sl.setStatus("Cancelled");
+        boolean res = slotRepo.update(sl);
+        if (!res) {
+            logger.warn("Update conflict detected: slotId={}", slotId);
+        }
+
+        logger.info("Slot cancelled successfully: slotId={}", slotId);
     }
 
     // Returns the number of failed booking attempts

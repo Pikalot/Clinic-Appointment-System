@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import termproject.cas.model.Provider;
 import termproject.cas.repository.ProviderRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -24,7 +25,7 @@ public class ProviderService {
         return providerRepo.findAll();
     }
 
-    public Provider getProviderById(Long providerId) {
+    public Optional<Provider> getProviderById(Long providerId) {
         return providerRepo.findById(providerId);
     }
 

@@ -1,107 +1,60 @@
 package termproject.cas.repository;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.PatientAssembler;
 import termproject.cas.model.Patient;
-
-import javax.sql.DataSource;
-import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
 @Repository
 public class PatientRepository {
-    private final DataSource dataSource;
-    private final Map<Long, Patient> patientMap = new HashMap<>(); // to be removed
-    private final MockRepository mockData; // to be removed
-    private long nextId = 1L;
+    private final JdbcTemplate jdbcTemplate;
 
-    public PatientRepository(DataSource dataSource, MockRepository mockData) {
-        this.dataSource = dataSource;
-        this.mockData = mockData;
+    public PatientRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Patient> findAll() {
-        return new ArrayList<>(patientMap.values());
-    }
+//    public List<Patient> findAll() {
+//        return new ArrayList<>(patientMap.values());
+//    }
 
     public Optional<Patient> findByUsernameAndPassword(String username, String password) {
         String sql = SQL.FIND_PATIENT_BY_USERNAME_PASSWORD;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ) {
-            statement.setString(1, username);
-            statement.setString(2, password);
-            ResultSet res = statement.executeQuery();
-
-            if (res.next()) {
-                return Optional.of(PatientAssembler.fromResultSet(res));
-            }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch patient by username and password", e);
-        }
-        return Optional.empty();
+        return jdbcTemplate.query(sql, res -> {
+            if (res.next()) return Optional.of(PatientAssembler.fromResultSet(res));
+            return Optional.empty();
+        }, username, password);
     }
 
     public Optional<Patient> findByMRN(Long mRN) {
         String sql = SQL.FIND_PATIENT_BY_MRN;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-        ) {
-            statement.setLong(1, mRN);
-            ResultSet res = statement.executeQuery();
-
+        return jdbcTemplate.query(sql, res -> {
             if (res.next()) {
                 return Optional.of(PatientAssembler.fromResultSet(res));
             }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch patient by username and password", e);
-        }
-        return Optional.empty();
+            return Optional.empty();
+        }, mRN);
     }
 
-    public Patient save(Patient patient) {
-        if (patient.getMrn() == null) {
-            patient.setMrn(nextId++);
-        }
-        patientMap.put(patient.getMrn(), patient);
-        return patient;
-    }
-
-    public void insert(Patient patient) {
-        if (patient.getMrn() == null) {
-            patient.setMrn(nextId++);
-        }
-
+    public boolean insert(Patient patient) {
         String sql = """
-                INSERT INTO Patients (MRN, First_name, Middle_name, Last_name, Sex, DoB, Contact_ID, Relationship, Version)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1);
+                INSERT INTO Patients (First_name, Middle_name, Last_name, Sex, DoB, Contact_ID, Relationship)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
                 """;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setLong(1, patient.getMrn());
-            statement.setString(2, patient.getFirstName());
-            statement.setString(3, patient.getMiddleName());
-            statement.setString(4, patient.getLastName());
-            statement.setString(5, patient.getSex());
-            statement.setDate(6, Date.valueOf(patient.getDob()));
-            statement.setLong(7, patient.getContactId());
-            statement.setString(8, patient.getRelationship());
+        int rows = jdbcTemplate.update(sql,
+                patient.getFirstName(),
+                patient.getMiddleName(),
+                patient.getLastName(),
+                patient.getSex(),
+                Date.valueOf(patient.getDob()),
+                patient.getContactId(),
+                patient.getRelationship());
 
-            statement.executeUpdate();
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to insert patient", e);
-        }
+        return rows == 1;
     }
 
     public boolean update(Patient patient) {
@@ -119,31 +72,17 @@ public class PatientRepository {
                 WHERE MRN = ? AND version = ?;
                 """;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setString(1, patient.getFirstName());
-            statement.setString(2, patient.getMiddleName());
-            statement.setString(3, patient.getLastName());
-            statement.setString(4, patient.getSex());
-            statement.setDate(5, Date.valueOf(patient.getDob()));
-            statement.setLong(6, patient.getContactId());
-            statement.setString(7, patient.getRelationship());
-            statement.setLong(8, patient.getMrn());
-            statement.setInt(9, patient.getVersion());
+        int rows = jdbcTemplate.update(sql,
+                patient.getFirstName(),
+                patient.getMiddleName(),
+                patient.getLastName(),
+                patient.getSex(),
+                Date.valueOf(patient.getDob()),
+                patient.getContactId(),
+                patient.getRelationship(),
+                patient.getMrn(),
+                patient.getVersion());
 
-            int rows = statement.executeUpdate();
-            return rows > 0; // Return true if update successful
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to update patient", e);
-        }
-    }
-
-    // [TO DO] replace this code with sql query
-    public Patient findById(Long mrn) {
-        mockData.ensureLoaded();
-        return mockData.getPatientMap().get(mrn);
+        return rows == 1;
     }
 }

@@ -7,6 +7,8 @@ public class SlotRequest {
     private LocalDateTime endTime;
     private Long providerId;
 
+    public SlotRequest() {}
+
     public LocalDateTime getStartTime() {
         return startTime;
     }

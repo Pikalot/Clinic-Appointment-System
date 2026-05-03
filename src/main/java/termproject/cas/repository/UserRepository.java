@@ -1,12 +1,10 @@
 package termproject.cas.repository;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.UserAssembler;
-import termproject.cas.model.Slot;
 import termproject.cas.model.User;
-
 import javax.sql.DataSource;
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,109 +13,64 @@ import java.util.*;
 
 @Repository
 public class UserRepository {
-    private final DataSource dataSource;
-    private long nextId = 1L;
+    private final JdbcTemplate jdbcTemplate;
 
-    public UserRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<User> findAll() {
         String sql = SQL.FIND_ALL_USERS;
         Map<Long, User> userMap = new HashMap<>();
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet res = statement.executeQuery()
-        ) {
-            while (res.next()) {
-                User user = UserAssembler.fromResultSet(res);
-                userMap.put(user.getId(), user);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch all users", e);
-        }
+        jdbcTemplate.query(sql, res -> {
+            User user = UserAssembler.fromResultSet(res);
+            userMap.put(user.getId(), user);
+        });
+
         return new ArrayList<>(userMap.values());
     }
 
-    public User findById(Long userId) {
+    public Optional<User> findById(Long userId) {
         String sql = SQL.FIND_USER_BY_ID;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setLong(1, userId);
-            ResultSet res = statement.executeQuery();
-            if (res.next()) {
-                return UserAssembler.fromResultSet(res);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch user by id", e);
-        }
-        return null;
+        return jdbcTemplate.query(sql, res -> {
+            if (!res.next()) return Optional.empty();
+            return Optional.of(UserAssembler.fromResultSet(res));
+        });
     }
 
     public Optional<User> findByUsername(String username) {
         String sql = SQL.FIND_USER_BY_USERNAME;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setString(1, username);
-            ResultSet res = statement.executeQuery();
-            if (res.next()) {
-                return Optional.of(UserAssembler.fromResultSet(res));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch user by username", e);
-        }
-        return Optional.empty();
+        return jdbcTemplate.query(sql, res -> {
+            if (!res.next()) return Optional.empty();
+            return Optional.of(UserAssembler.fromResultSet(res));
+        }, username);
     }
 
     public Optional<User> findByUsernameAndPassword(String username, String password) {
         String sql = SQL.FIND_USER_BY_USERNAME_PASSWORD;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setString(1, username);
-            statement.setString(2, password);
-            ResultSet res = statement.executeQuery();
-            if (res.next()) {
-                return Optional.of(UserAssembler.fromResultSet(res));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch user by username and password", e);
-        }
-        return Optional.empty();
+        return jdbcTemplate.query(sql, res -> {
+            if (!res.next()) return  Optional.empty();
+            return Optional.of(UserAssembler.fromResultSet(res));
+        }, username, password);
     }
 
     public String findRoleById(Long userId) {
         String sql = SQL.FIND_ROLE_BY_ID;
+        String[] result = {"Unknown"};
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ) {
-            statement.setLong(1, userId);
-            ResultSet res = statement.executeQuery();
+        jdbcTemplate.query(sql, res -> {
+            String staffRole = res.getString("Staff_Role");
+            Long providerId = res.getLong("Provider_ID");
 
-            if (res.next()) {
-                String staffRole = res.getString("Staff_Role");
-                Long providerId = res.getLong("Provider_ID");
+            if (staffRole != null) result[0] = staffRole;      // "Admin" or "Staff"
+            else if (providerId != 0) result[0] = "Provider";
+        }, userId);
 
-                if (staffRole != null) return staffRole;      // "Admin" or "Staff"
-                if (providerId != 0) return "Provider";       // provider found
-            }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to get role", e);
-        }
-        return "Unknown";
+        return result[0];
     }
 
 

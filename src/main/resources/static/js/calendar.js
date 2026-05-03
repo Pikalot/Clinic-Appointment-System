@@ -54,9 +54,10 @@ function renderCalendar() {
         const dateValue = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         const isSelected = dateValue === selectedDate ? "selected" : "";
         const isToday = dateValue === today.toISOString().split("T")[0] ? "today" : "";
+        const hasSlots = slots.some(slot => slot.date === dateValue) ? "has-slots" : ""; // add this
 
         calendar.innerHTML += `
-            <div class="date ${isSelected} ${isToday}" onclick="selectDate('${dateValue}')">
+            <div class="date ${isSelected} ${isToday} ${hasSlots}" onclick="selectDate('${dateValue}')">
                 ${day}
             </div>
         `;

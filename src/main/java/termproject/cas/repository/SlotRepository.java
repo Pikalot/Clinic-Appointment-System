@@ -1,36 +1,29 @@
 package termproject.cas.repository;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.SlotAssembler;
 import termproject.cas.model.Slot;
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
 @Repository
 public class SlotRepository {
-    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
-    public SlotRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public SlotRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Slot> findAll() {
         String sql = SQL.FIND_ALL_SLOTS;
         Map<Long, Slot> slotMap = new HashMap<>();
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet res = statement.executeQuery()
-        ) {
-            while (res.next()) {
-                Slot slot = SlotAssembler.fromResultSet(res);
-                slotMap.put(slot.getId(), slot);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch all slots", e);
-        }
+        jdbcTemplate.query(sql, res -> {
+            Slot slot = SlotAssembler.fromResultSet(res);
+            slotMap.put(slot.getId(), slot);
+        });
+
         return new ArrayList<>(slotMap.values());
     }
 
@@ -38,59 +31,32 @@ public class SlotRepository {
         String sql = SQL.FIND_ALL_SLOTS_BY_STATUS;
         Map<Long, Slot> slotMap = new HashMap<>();
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setString(1, status);
-            ResultSet res = statement.executeQuery();
-            while (res.next()) {
-                Slot slot = SlotAssembler.fromResultSet(res);
-                slotMap.put(slot.getId(), slot);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch all slots by status", e);
-        }
+        jdbcTemplate.query(sql, res -> {
+            Slot slot = SlotAssembler.fromResultSet(res);
+            slotMap.put(slot.getId(), slot);
+        }, status);
+
         return new ArrayList<>(slotMap.values());
     }
 
-    public Slot findById(Long slotId) {
+    public Optional<Slot> findById(Long slotId) {
         String sql = SQL.FIND_SLOT_BY_ID;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setLong(1, slotId);
-            ResultSet res = statement.executeQuery();
-            if (res.next()) {
-                return SlotAssembler.fromResultSet(res);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch all slots", e);
-        }
-        return null;
+        return jdbcTemplate.query(sql, res -> {
+            if (!res.next()) return Optional.empty();
+            return Optional.of(SlotAssembler.fromResultSet(res));
+        }, slotId);
     }
 
     public List<Slot> findByProviderId(Long providerId) {
         String sql = SQL.FIND_SLOT_BY_PROVIDER_ID;
         Map<Long, Slot> slotMap = new HashMap<>();
 
-        try (
-            Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)
-                ) {
-            statement.setLong(1, providerId);
-            ResultSet res = statement.executeQuery();
+        jdbcTemplate.query(sql, res -> {
+            Slot slot = SlotAssembler.fromResultSet(res);
+            slotMap.put(slot.getId(), slot);
+        }, providerId);
 
-            while (res.next()) {
-                Slot slot = SlotAssembler.fromResultSet(res);
-                slotMap.put(slot.getId(), slot);
-            }
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch slot by provider ID", e);
-        }
         return new ArrayList<>(slotMap.values());
     }
 
@@ -101,25 +67,18 @@ public class SlotRepository {
 //        return slot;
 //    }
 
-    public void insert(Slot slot) {
+    public boolean insert(Slot slot) {
         String sql = """
             INSERT INTO Availability_Slots (Start_time, End_time, Provider_ID)
             VALUES (?, ?, ?)
             """;
 
-        try (
-            Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setTimestamp(1, Timestamp.valueOf(slot.getStartTime()));
-            statement.setTimestamp(2, Timestamp.valueOf(slot.getEndTime()));
-            statement.setLong(3, slot.getProvider().getId());
+        int rows = jdbcTemplate.update(sql,
+                Timestamp.valueOf(slot.getStartTime()),
+                Timestamp.valueOf(slot.getEndTime()),
+                slot.getProvider().getId());
 
-            statement.executeUpdate();
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to insert available slot", e);
-        }
+         return rows == 1;
     }
 
     public boolean update(Slot slot) {
@@ -134,22 +93,14 @@ public class SlotRepository {
                 WHERE Slot_ID = ? AND version = ?
                 """;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setTimestamp(1, Timestamp.valueOf(slot.getStartTime()));
-            statement.setTimestamp(2, Timestamp.valueOf(slot.getEndTime()));
-            statement.setLong(3, slot.getProvider().getId());
-            statement.setString(4, slot.getStatus());
-            statement.setLong(5, slot.getId());
-            statement.setInt(6, slot.getVersion());
+        int rows = jdbcTemplate.update(sql,
+                Timestamp.valueOf(slot.getStartTime()),
+                Timestamp.valueOf(slot.getEndTime()),
+                slot.getProvider().getId(),
+                slot.getStatus(),
+                slot.getId(),
+                slot.getVersion());
 
-            int rows = statement.executeUpdate();
-            return rows > 0; // Return true if update successful
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Failed to update available slot", e);
-        }
+        return rows == 1;
     }
 }

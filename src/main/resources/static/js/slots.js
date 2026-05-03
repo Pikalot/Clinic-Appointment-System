@@ -48,7 +48,7 @@ function renderSlots() {
             actionBtn = `<a href="#" onclick="toggleDrawer()" class="btn-login-prompt">Log in to book</a>`;
         } else if (role === "Patient") {
             // Patient → can book
-            actionBtn = `<button class="btn-book" onclick="bookSlot(${slot.id})">Book</button>`;
+            actionBtn = `<button class="btn-edit" onclick="bookSlot(${slot.id})">Book</button>`;
         } else {
             // Staff/Provider/Admin → can manage
             actionBtn = `

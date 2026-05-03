@@ -7,6 +7,8 @@ import org.springframework.web.client.RestTemplate;
 import termproject.cas.assembler.NotificationAssembler;
 import termproject.cas.model.*;
 import termproject.cas.repository.*;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.*;
@@ -42,34 +44,44 @@ public class AppointmentService {
     public void bookAppointment(BookingRequest request) {
         long mrn = request.getMrn();
         long slotId = request.getSlotId();
+        LocalDateTime currentTime = LocalDateTime.now();
 
         // Log if successfully receives a request
         logger.info("Booking request received: mrn={}, slotId={}",
                 mrn, slotId);
 
-        Patient patient = patientRepo.findById(mrn);
-        if (patient == null) {
+        Optional<Patient> patient = patientRepo.findByMRN(mrn);
+        if (patient.isEmpty()) {
             failureCount.incrementAndGet();
-            logger.warn("Patient not found: mrn={}", mrn);
+            logger.warn("Patient not found: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Patient not found");
         }
 
-        Slot slot = slotRepo.findById(slotId);
-        if (slot == null) {
+        Optional<Slot> slot = slotRepo.findById(slotId);
+        if (slot.isEmpty()) {
             failureCount.incrementAndGet();
-            logger.warn("Slot not found: slotId={}", slotId);
+            logger.warn("Slot not found: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Slot not found");
         }
-        if (slot.getStatus().equals("Taken")) {
+
+        Slot sl = slot.get();
+        if (sl.getStatus().equals("Taken")) {
             failureCount.incrementAndGet();
             // WARN: slot already taken or booking conflict
-            logger.warn("Slot is not available: slotId={}", slotId);
+            logger.warn("Slot is not available: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Slot is not available");
+        }
+        if (sl.getStartTime().isBefore(currentTime)) {
+            failureCount.incrementAndGet();
+            // WARN: slot is stale
+            logger.warn("Slot is expired: mrn={}, slotID={}, startDate={}, currentTime={}",
+                mrn, slotId, slot.get().getStartTime(), currentTime);
+            throw new RuntimeException("Slot is expired");
         }
 
         // 1. Update slot status taken
-        slot.setStatus("Taken");
-        boolean updated = slotRepo.update(slot);
+        sl.setStatus("Taken");
+        boolean updated = slotRepo.update(sl);
 
         // 2. If another user already changed the slot, reject transaction
         if (!updated) {
@@ -80,13 +92,18 @@ public class AppointmentService {
 
         // 3. Create a new appointment
         Appointment appt = new Appointment();
-        appt.setPatient(patient);
-        appt.setAvailableSlot(slot);
+        appt.setPatient(patient.get());
+        appt.setAvailableSlot(sl);
         appt.setStatus("SCHEDULED");
         appt.setDuration(1);
 
         // 4. Insert appointment only if slot update succeeded
-        apptRepo.insert(appt);
+        boolean success = apptRepo.insert(appt);
+        if (!success) {
+            failureCount.incrementAndGet();
+            logger.warn("Writing appointment to database failed: apptId={}, mrn={}, slotId={}",
+                    appt.getId(), mrn, slotId);
+        }
         successCount.incrementAndGet();
         // INFO: successful booking
         logger.info("Appointment booked successfully: apptId={}, mrn={}, slotId={}",

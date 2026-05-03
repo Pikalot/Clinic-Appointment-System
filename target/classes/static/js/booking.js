@@ -4,26 +4,28 @@ function bookSlot(slotId) {
         toggleDrawer(); // open drawer instead of navigating
         return;
     }
+    openServiceModal(slotId);
+}
 
-    const payload = {
-        mrn: mrn,
-        slotId: slotId
-    };
+function sendBookingRequest(slotId, serviceId) {
+    const payload = { mrn, slotId, serviceId };
 
-    const endpoint = role === "Patient"
-        ? `/patients/${mrn}/booking`
-        : `/appointments/booking`;
-
-    fetch(endpoint, {
+    fetch('/appointments', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     })
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-        renderAppointments(); // refresh appointments after booking
-        fetchSlots();         // re-fetch slots to reflect new status
+    .then(res => {
+        return res.text().then(text => ({ ok: res.ok, text }));
+    })
+    .then(({ ok, text }) => {
+        if (!ok) {
+            alert(text);
+            return;
+        }
+        alert(text);
+        renderAppointments();
+        fetchSlots();
     })
     .catch(err => {
         console.error("Booking failed:", err);
@@ -93,7 +95,6 @@ function submitCreateSlot() {
         body: JSON.stringify(payload)
     })
     .then(res => {
-        console.log(res.ok, res.body);
         if (!res.ok) throw new Error("Failed to create slot");
         return res.text();
     })

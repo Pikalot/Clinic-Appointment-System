@@ -8,6 +8,7 @@ import termproject.cas.model.Clinic;
 import termproject.cas.repository.ClinicRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -25,7 +26,7 @@ public class ClinicService {
         return clinicRepo.findAll();
     }
 
-    public Clinic getClinicById(Long clinicId) {
+    public Optional<Clinic> getClinicById(Long clinicId) {
         return clinicRepo.findById(clinicId);
     }
 

@@ -18,17 +18,7 @@ function renderAppointments() {
                     container.innerHTML = `<p>No upcoming appointments.</p>`;
                     return;
                 }
-                data.forEach(appt => {
-                    container.innerHTML += `
-                        <div class="appointment-card">
-                            <strong>
-                                ${appt.availableSlot.startTime} - ${appt.availableSlot.endTime}
-                                ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
-                            </strong>
-                            <p>${appt.service} — ${appt.status}</p>
-                        </div>
-                    `;
-                });
+                renderHelper(data);
             })
             .catch(err => {
                 console.error("Failed to fetch patient appointments:", err);
@@ -45,24 +35,29 @@ function renderAppointments() {
                 container.innerHTML = `<p>No appointments found.</p>`;
                 return;
             }
-            data.forEach(appt => {
-                container.innerHTML += `
-                    <div class="appointment-card">
-                        <div class="appt-date">
-                            📅 ${formatDate(appt.availableSlot.startTime)}
-                        </div>
-                        <strong>
-                            🕐 ${formatTime(appt.availableSlot.startTime, appt.availableSlot.endTime)}
-                            — ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
-                        </strong>
-                        <p>👤 ${appt.patient.firstName} ${appt.patient.lastName}</p>
-                        <p>🏥 ${appt.service} — <span class="status-${appt.status.toLowerCase()}">${appt.status}</span></p>
-                    </div>
-                `;
-            });
+            renderHelper(data);
         })
         .catch(err => {
             console.error("Failed to fetch appointments:", err);
             container.innerHTML = `<p>Failed to load appointments.</p>`;
         });
+}
+
+function renderHelper(data) {
+    const container = document.getElementById("appointments");
+    data.forEach(appt => {
+        container.innerHTML += `
+            <div class="appointment-card">
+                <div class="appt-date">
+                    📅 ${formatDate(appt.availableSlot.startTime)}
+                </div>
+                <strong>
+                    🕐 ${formatTime(appt.availableSlot.startTime, appt.availableSlot.endTime)}
+                    — ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
+                </strong>
+                <p>👤 ${appt.patient.firstName} ${appt.patient.lastName}</p>
+                <p>🏥 ${appt.service} — <span class="status-${appt.status.toLowerCase()}">${appt.status}</span></p>
+            </div>
+        `;
+    });
 }

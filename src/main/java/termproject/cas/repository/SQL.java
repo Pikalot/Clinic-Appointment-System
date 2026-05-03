@@ -189,4 +189,18 @@ public class SQL {
         LEFT JOIN Staffs S ON S.Staff_ID = U.User_ID
         WHERE U.User_ID = ?
         """;
+
+    public static final String FIND_ALL_SERVICES = """
+        SELECT
+            *
+        FROM Services
+        """;
+
+    public static final String FIND_ALL_SERVICES_BY_STATUS = FIND_ALL_SERVICES + """
+        WHERE Is_Active = ?
+        """;
+
+    public static final String FIND_SERVICE_BY_ID = FIND_ALL_SERVICES + """
+        WHERE Service_ID = ?
+        """;
 }

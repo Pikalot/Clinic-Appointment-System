@@ -1,5 +1,6 @@
 package termproject.cas.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import termproject.cas.model.Appointment;
 import termproject.cas.model.BookingRequest;
@@ -25,9 +26,13 @@ public class AppointmentController {
 //        return service.addAppointment(appt);
 //    }
 
-    @PostMapping("/booking")
-    public String bookAppointment(@RequestBody BookingRequest request) {
-        service.bookAppointment(request);
-        return "Appointment booked and notification sent";
+    @PostMapping
+    public ResponseEntity<?> bookAppointment(@RequestBody BookingRequest request) {
+        try {
+            service.bookAppointment(request);
+            return ResponseEntity.status(201).body("Appointment booked successfully!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 }

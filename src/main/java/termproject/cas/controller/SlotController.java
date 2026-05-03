@@ -7,7 +7,6 @@ import termproject.cas.model.SlotRequest;
 import termproject.cas.service.SlotService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/slots")

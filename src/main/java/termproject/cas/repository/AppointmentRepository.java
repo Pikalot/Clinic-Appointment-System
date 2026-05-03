@@ -1,64 +1,38 @@
 package termproject.cas.repository;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.AppointmentAssembler;
 import termproject.cas.model.*;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 @Repository
 public class AppointmentRepository {
-    private final DataSource dataSource;
-    private final MockRepository mockData;
-    private long nextId = 2L;
+    private final JdbcTemplate jdbcTemplate;
 
-    public AppointmentRepository(DataSource dataSource, MockRepository mockData) {
-        this.dataSource = dataSource;
-        this.mockData = mockData;
+
+    public AppointmentRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Appointment> findById(Long apptId) {
+    public Optional<Appointment> findById(Long apptId) {
         String sql = SQL.FIND_APPOINTMENT_BY_ID;
-        Map<Long, Appointment> apptMap = new HashMap<>();
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setLong(1, apptId);
-            ResultSet res = statement.executeQuery();
-
-            while (res.next()) {
-                Appointment appt = AppointmentAssembler.fromResultSet(res);
-                apptMap.put(appt.getId(), appt);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch appointment by ID", e);
-        }
-        return new ArrayList<>(apptMap.values());
+        return jdbcTemplate.query(sql, res -> {
+            if (!res.next()) return Optional.empty();
+            return Optional.of(AppointmentAssembler.fromResultSet(res));
+        }, apptId);
     }
 
     public List<Appointment> findAll() {
         String sql = SQL.FIND_ALL_APPOINTMENTS;
         Map<Long, Appointment> apptMap = new HashMap<>();
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet res = statement.executeQuery()
-        ) {
-            while (res.next()) {
-                Appointment appt = AppointmentAssembler.fromResultSet(res);
-                apptMap.put(appt.getId(), appt);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch all appointments", e);
-        }
+        jdbcTemplate.query(sql, res -> {
+            Appointment appt = AppointmentAssembler.fromResultSet(res);
+            apptMap.put(appt.getId(), appt);
+        });
+
         return new ArrayList<>(apptMap.values());
     }
 
@@ -66,61 +40,32 @@ public class AppointmentRepository {
         String sql = SQL.FIND_APPOINTMENTS_BY_MRN;
         Map<Long, Appointment> apptMap = new HashMap<>();
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setLong(1, mRN);
-            ResultSet res = statement.executeQuery();
+        jdbcTemplate.query(sql, res -> {
+            Appointment appt = AppointmentAssembler.fromResultSet(res);
+            apptMap.put(appt.getId(), appt);
+        }, mRN);
 
-            while (res.next()) {
-                Appointment appt = AppointmentAssembler.fromResultSet(res);
-                apptMap.put(appt.getId(), appt);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch appointment by MRN", e);
-        }
         return new ArrayList<>(apptMap.values());
     }
 
-    public Appointment save(Appointment appt) {
-        mockData.ensureLoaded();
+//    public Appointment save(Appointment appt) {
+//        apptMap.put(appt.getId(), appt);
+//        return appt;
+//    }
 
-        if (appt.getId() == null) {
-            appt.setId(nextId++);
-        }
-        mockData.getApptMap().put(appt.getId(), appt);
-        return appt;
-    }
-
-    public void insert(Appointment appt) {
-        mockData.ensureLoaded();
-
-        if (appt.getId() == null) {
-            appt.setId(nextId++);
-        }
-
-        mockData.getApptMap().put(appt.getId(), appt); // keep memory copy for testing/submission
-
+    public boolean insert(Appointment appt) {
         String sql = """
-                INSERT INTO Appointments (Appt_ID, Appt_Status, Slot_ID, Service_ID, MRN, Version)
-                VALUES (?, ?, ?, ?, ?, 1)
+                INSERT INTO Appointments (Appt_Status, Slot_ID, Service_ID, MRN)
+                VALUES (?, ?, ?, ?)
                 """;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setLong(1, appt.getId());
-            statement.setString(2, appt.getStatus());
-            statement.setLong(3, appt.getAvailableSlot().getId());
-            statement.setInt(4, appt.getServiceId());
-            statement.setLong(5, appt.getPatient().getMrn());
+        int rows = jdbcTemplate.update(sql,
+                appt.getStatus(),
+                appt.getAvailableSlot().getId(),
+                appt.getServiceId(),
+                appt.getPatient().getMrn());
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to insert appointment", e);
-        }
+        return rows == 1;
     }
 
     public boolean update(Appointment appt) {
@@ -135,21 +80,14 @@ public class AppointmentRepository {
                 WHERE Appt_ID = ? AND Version = ?;
                 """;
 
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
-            statement.setString(1, appt.getStatus());
-            statement.setLong(2, appt.getAvailableSlot().getId());
-            statement.setInt(3, appt.getServiceId());
-            statement.setLong(4, appt.getPatient().getMrn());
-            statement.setLong(5, appt.getId());
-            statement.setInt(6, appt.getVersion());
+        int rows = jdbcTemplate.update(sql,
+                appt.getStatus(),
+                appt.getAvailableSlot().getId(),
+                appt.getServiceId(),
+                appt.getPatient().getMrn(),
+                appt.getId(),
+                appt.getVersion());
 
-            int rows = statement.executeUpdate();
-            return rows > 0;
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to update appointment", e);
-        }
+        return rows == 1;
     }
 }

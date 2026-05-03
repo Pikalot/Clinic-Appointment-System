@@ -95,12 +95,37 @@
             </div>
         </div>
 
+        <!-- SERVICE MODAL -->
+        <div id="serviceModal" style="display:none" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>Select a Service</h3>
+                    <button onclick="closeServiceModal()" class="modal-close">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="service-header">
+                        <span>Service</span>
+                        <span>Duration</span>
+                        <span>Fee</span>
+                    </div>
+                    <div class="service-options"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button onclick="closeServiceModal()" class="btn-cancel">Cancel</button>
+                    <button id="confirmBookingBtn" class="btn-confirm">Confirm</button>
+                </div>
+            </div>
+        </div>
+
         <script src="/js/sessions.js"></script>
         <script src="/js/utils.js"></script>
         <script src="/js/auth.js"></script>
         <script src="/js/calendar.js"></script>
         <script src="/js/slots.js"></script>
         <script src="/js/appointments.js"></script>
+        <script src="/js/serviceSelectionModal.js"></script>
         <script src="/js/booking.js"></script>
         <script src="/js/main.js"></script>
     </body>
