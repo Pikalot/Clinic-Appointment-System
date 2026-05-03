@@ -3,13 +3,9 @@ package termproject.cas.model;
 public class BookingRequest {
     private long mrn;
     private long slotId;
+    private int serviceId;
 
     public BookingRequest() {}
-
-    public BookingRequest(long mrn, long slotId) {
-        this.setMrn(mrn);
-        this.setSlotId(slotId);
-    }
 
     public long getMrn() {
         return mrn;
@@ -25,5 +21,13 @@ public class BookingRequest {
 
     public void setSlotId(long slotId) {
         this.slotId = slotId;
+    }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 }

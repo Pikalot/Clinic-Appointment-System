@@ -71,9 +71,12 @@ function selectDate(date) {
     renderCalendar();
 
     if (role && role !== "Patient" && role != "Unknown") {
+        const [year, month, day] = date.split("-").map(Number);
+        const localDate = new Date(year, month - 1, day);
+
         const label = document.getElementById("selectedDateLabel");
         const row = document.getElementById("selectedDateRow");
-        label.textContent = new Date(date).toLocaleDateString("en-US", {
+        label.textContent = localDate.toLocaleDateString("en-US", {
             weekday: "long", month: "long", day: "numeric"
         });
         row.style.display = "flex";

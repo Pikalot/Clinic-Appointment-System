@@ -8,7 +8,11 @@ function bookSlot(slotId) {
 }
 
 function sendBookingRequest(slotId, serviceId) {
-    const payload = { mrn, slotId, serviceId };
+    const payload = {
+        mrn: mrn,
+        slotId: slotId,
+        serviceId: serviceId
+    };
 
     fetch('/appointments', {
         method: "POST",
@@ -52,18 +56,6 @@ function populateModalProviders() {
         .then(data => {
             data.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">${p.firstName} ${p.lastName}</option>`;
-            });
-        });
-}
-
-function populateModalClinics() {
-    const select = document.getElementById("slotClinic");
-    select.innerHTML = '<option value="">Select Clinic</option>';
-    fetch("/clinics")
-        .then(res => res.json())
-        .then(data => {
-            data.forEach(c => {
-                select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
             });
         });
 }

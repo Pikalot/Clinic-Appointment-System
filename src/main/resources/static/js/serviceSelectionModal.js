@@ -8,7 +8,7 @@ function openServiceModal(slotId) {
             data.forEach(s => {
                 container.innerHTML += `
                     <label class="service-option">
-                        <input type="radio" name="service" value="${s.name}" />
+                        <input type="radio" name="service" value="${s.serviceId}" />
                         <span class="service-name">${s.name}</span>
                         <span class="service-duration">${s.duration} hour</span>
                         <span class="service-fee">$${s.fee}</span>
@@ -23,6 +23,7 @@ function openServiceModal(slotId) {
 
     document.getElementById("confirmBookingBtn").onclick = function() {
         const service = document.querySelector('input[name="service"]:checked')?.value;
+
         if (!service) {
             alert("Please select a service.");
             return;

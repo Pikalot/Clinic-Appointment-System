@@ -44,6 +44,7 @@ public class AppointmentService {
     public void bookAppointment(BookingRequest request) {
         long mrn = request.getMrn();
         long slotId = request.getSlotId();
+        int serviceId = request.getServiceId();
         LocalDateTime currentTime = LocalDateTime.now();
 
         // Log if successfully receives a request
@@ -94,20 +95,20 @@ public class AppointmentService {
         Appointment appt = new Appointment();
         appt.setPatient(patient.get());
         appt.setAvailableSlot(sl);
-        appt.setStatus("SCHEDULED");
+        appt.setStatus("Scheduled");
         appt.setDuration(1);
+        appt.setServiceId(serviceId);
 
         // 4. Insert appointment only if slot update succeeded
         boolean success = apptRepo.insert(appt);
         if (!success) {
             failureCount.incrementAndGet();
-            logger.warn("Writing appointment to database failed: apptId={}, mrn={}, slotId={}",
-                    appt.getId(), mrn, slotId);
+            logger.warn("Writing appointment to database failed: mrn={}, slotId={}",
+                    mrn, slotId);
         }
         successCount.incrementAndGet();
         // INFO: successful booking
-        logger.info("Appointment booked successfully: apptId={}, mrn={}, slotId={}",
-                appt.getId(),
+        logger.info("Appointment booked successfully: mrn={}, slotId={}",
                 mrn,
                 slotId);
 
@@ -116,8 +117,8 @@ public class AppointmentService {
     }
 
     private void sendNotification(Appointment appt) {
-        long apptId = appt.getId();
-        long mrn = appt.getPatient().getMrn();
+        Long mrn = appt.getPatient().getMrn();
+        Long slotId = appt.getAvailableSlot().getId();
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -125,17 +126,18 @@ public class AppointmentService {
             String url = "http://localhost:8080/notifications";
             NotificationRequest body = NotificationAssembler.toRequest(appt);
 
-            logger.info("Calling notification service for: apptId={}, mrn={}",
-                    apptId, mrn);
+            logger.info("Calling notification service for: mrn={}, slotId={}",
+                    mrn, slotId);
 
             ResponseEntity<String> response = restTemplate.postForEntity(url, body, String.class);
-            logger.info("Notification service responded: apptId={}, status={}",
-                    apptId,
+            logger.info("Notification service responded: mrn={}, slotId={}, status={}",
+                    mrn,
+                    slotId,
                     response.getStatusCode());
         }
         catch (Exception e) {
-            logger.error("Notification service failed: apptId={}, mrn={}",
-                    apptId, mrn, e);
+            logger.error("Notification service failed: mrn={}, slotId={}",
+                    mrn, slotId, e);
         }
     }
 

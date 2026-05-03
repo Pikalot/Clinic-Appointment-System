@@ -7,7 +7,6 @@ public class NotificationAssembler {
 
         req.setPatient(appt.getPatient().getFirstName());
         req.setProvider(appt.getAvailableSlot().getProvider().getFirstName());
-//        req.setClinic(appt.getAvailableSlot().getProvider().getClinic().getNameAndAddress());
         req.setDate(appt.getAvailableSlot().getStartTime().toString());
         req.setContact(appt.getPatient().getEmails().get(0));
 
