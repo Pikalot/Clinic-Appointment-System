@@ -13,6 +13,7 @@ public class Patient {
     private LocalDate dob;
     private List<Address> addresses;
     private List<String> emails;
+    private String primaryEmail;
     private List<Phone> phones;
     private int version;
 
@@ -186,5 +187,13 @@ public class Patient {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public String getPrimaryEmail() {
+        return primaryEmail;
+    }
+
+    public void setPrimaryEmail(String primaryEmail) {
+        this.primaryEmail = primaryEmail;
     }
 }

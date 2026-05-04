@@ -203,4 +203,16 @@ public class SQL {
     public static final String FIND_SERVICE_BY_ID = FIND_ALL_SERVICES + """
         WHERE Service_ID = ?
         """;
+
+    public static final String FIND_ALL_PATIENT_EMAILS = """
+        SELECT * FROM Patient_Emails
+        """;
+
+    public static final String FIND_ALL_PATIENT_EMAILS_BY_MRN = FIND_ALL_PATIENT_EMAILS + """
+        WHERE MRN = ?
+        """;
+
+    public static final String FIND_PATIENT_EMAIL_BY_MRN_TYPE = FIND_ALL_PATIENT_EMAILS + """
+        WHERE MRN = ? AND Type = ?
+        """;
 }

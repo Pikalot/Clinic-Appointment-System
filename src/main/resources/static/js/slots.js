@@ -143,7 +143,7 @@ function openCreateSlotModal() {
 }
 
 function closeCreateSlotModal() {
-    document.getElementById("errorModal").style.display = "";
+    document.getElementById("errorModal").textContent = "";
     document.getElementById("createSlotModal").style.display = "none";
 }
 
@@ -179,24 +179,27 @@ function submitCreateSlot() {
         endTime:    `${date}T${end}:00`,
         providerId: provider
     };
-
     fetch("/slots", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     })
     .then(res => {
-        if (!res.ok) throw new Error("Failed to create slot");
-        return res.text();
+        return res.text().then(text => ({ ok: res.ok, text }));
     })
-    .then(msg => {
-        showToast(msg || "Slot created successfully!");
+    .then(({ ok, text }) => {
+        if (!ok) {
+            document.getElementById("errorModal").textContent = text;
+            return;
+        }
+
+        showToast(text || "Slot created successfully!");
         closeCreateSlotModal();
         fetchSlots();
     })
     .catch(err => {
         console.error("Create slot failed:", err);
-        document.getElementById("errorModal").textContent = "Error: Failed to create slot. Please try again";
+        document.getElementById("errorModal").textContent = "Failed to create slot. Please try again.";
     });
 }
 

@@ -29,7 +29,12 @@ public class SlotController {
             return ResponseEntity.status(201).body("Slot created");
         }
         catch (RuntimeException e) {
-            return ResponseEntity.status(409).body("Conflict! Unable to create slot!");
+            String msg = switch (e.getMessage()) {
+                case "Time conflict found" -> "This time slot overlaps with an existing slot.";
+                case "Slot not found" -> "Slot no longer exists.";
+                default -> "Unable to create slot. Please try again.";
+            };
+            return ResponseEntity.status(409).body(msg);
         }
     }
 

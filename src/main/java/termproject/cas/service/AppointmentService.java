@@ -113,6 +113,7 @@ public class AppointmentService {
                 slotId);
 
         // 5. Send a request to Notification Service
+        // -> Check Logs and Console for external service outcomes
         sendNotification(appt);
     }
 
@@ -126,10 +127,13 @@ public class AppointmentService {
             String url = "http://localhost:8080/notifications";
             NotificationRequest body = NotificationAssembler.toRequest(appt);
 
+            System.out.println("Calling notification service for: " + appt.getPatient().getEmails().get(0));
             logger.info("Calling notification service for: mrn={}, slotId={}",
                     mrn, slotId);
 
             ResponseEntity<String> response = restTemplate.postForEntity(url, body, String.class);
+
+            System.out.println("Notification service responded with: " + response.getBody());
             logger.info("Notification service responded: mrn={}, slotId={}, status={}",
                     mrn,
                     slotId,

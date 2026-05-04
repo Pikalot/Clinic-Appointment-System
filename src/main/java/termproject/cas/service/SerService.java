@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import termproject.cas.model.ServiceRequest;
-import termproject.cas.model.Slot;
 import termproject.cas.repository.ServiceRepository;
 
 import java.util.List;

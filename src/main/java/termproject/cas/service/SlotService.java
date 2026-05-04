@@ -51,21 +51,30 @@ public class SlotService {
         logger.info("Creating slot request received: startTime={}, endTime={}, providerId={}",
             startTime, endTime, providerId);
 
-        // 1. Create a provider
+        // 1. Check for time conflict
+        if (slotRepo.hasOverlap(providerId, startTime, endTime)) {
+            failureCount.incrementAndGet();
+            logger.warn("Time conflict found: startTime={}, endTime={}, providerId={}",
+                startTime, endTime, providerId);
+            throw new RuntimeException("Time conflict found");
+        }
+
+        // 2. Create a provider
         Optional<Provider> provider = providerRepo.findById(providerId);
         if (provider.isEmpty()) {
             failureCount.incrementAndGet();
-            logger.warn("Provider not found: providerId={}", providerId);
+            logger.warn("Provider not found: startTime={}, endTime={}, providerId={}",
+                    startTime, endTime, providerId);
             throw new RuntimeException("Provider not found");
         }
 
-        // 2. Create a new slot
+        // 3. Create a new slot
         Slot slot = new Slot();
         slot.setStartTime(startTime);
         slot.setEndTime(endTime);
         slot.setProvider(provider.get());
 
-        // 3. Insert slot
+        // 4. Insert slot
         slotRepo.insert(slot);
         successCount.incrementAndGet();
         logger.info("Slot created successfully: startTime={}, endTime={}, providerId={}",

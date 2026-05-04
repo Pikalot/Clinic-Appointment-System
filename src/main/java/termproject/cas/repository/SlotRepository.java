@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import termproject.cas.assembler.SlotAssembler;
 import termproject.cas.model.Slot;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
@@ -102,5 +103,18 @@ public class SlotRepository {
                 slot.getVersion());
 
         return rows == 1;
+    }
+
+    public boolean hasOverlap(Long providerId, LocalDateTime start, LocalDateTime end) {
+        String sql = """
+            SELECT COUNT(*) FROM Availability_Slots
+            WHERE Provider_ID = ?
+            AND Start_time < ?
+            AND End_time > ?
+            AND Status != 'Cancelled'
+            """;
+
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, providerId, end, start);
+        return count != null && count > 0;
     }
 }
