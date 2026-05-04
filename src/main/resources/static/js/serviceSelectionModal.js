@@ -1,6 +1,7 @@
 function openServiceModal(slotId) {
     const container = document.querySelector(".service-options");
     container.innerHTML = ""; // clear previous
+    document.getElementById("errorSVModal").textContent = ""; // clear error on open
 
     fetch('/services')
         .then(res => res.json())
@@ -25,7 +26,7 @@ function openServiceModal(slotId) {
         const service = document.querySelector('input[name="service"]:checked')?.value;
 
         if (!service) {
-            alert("Please select a service.");
+            document.getElementById("errorSVModal").textContent = "Please select a service.";
             return;
         }
         closeServiceModal();
@@ -36,5 +37,6 @@ function openServiceModal(slotId) {
 }
 
 function closeServiceModal() {
+    document.getElementById("errorSVModal").textContent = "";
     document.getElementById("serviceModal").style.display = "none";
 }

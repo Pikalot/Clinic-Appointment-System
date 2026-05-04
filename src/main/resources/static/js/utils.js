@@ -15,3 +15,13 @@ function formatDate(dateTimeStr) {
         year: "numeric"     // "2026"
     }); // → "Thu, Apr 30, 2026"
 }
+
+// Helper to show toast messages
+function showToast(message, type = "success") {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
+}

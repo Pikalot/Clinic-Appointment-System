@@ -86,11 +86,15 @@ function deleteSlot(slotId) {
     })
     .then(res => {
         if (!res.ok) throw new Error("Failed to delete");
+        return res.text();
+    })
+    .then(msg => {
+        showToast(msg);
         fetchSlots();
     })
     .catch(err => {
         console.error("Delete failed:", err);
-        alert("Failed to delete slot.");
+        showToast(err, "error");
     });
 }
 
@@ -129,3 +133,74 @@ function loadClinics() {
             console.error("Failed to fetch clinics:", err);
         });
 }
+
+// ── CREATE SLOT MODAL ──
+function openCreateSlotModal() {
+    document.getElementById("errorModal").textContent = "";
+    document.getElementById("slotDate").value = selectedDate;
+    populateModalProviders();
+    document.getElementById("createSlotModal").style.display = "flex";
+}
+
+function closeCreateSlotModal() {
+    document.getElementById("errorModal").style.display = "";
+    document.getElementById("createSlotModal").style.display = "none";
+}
+
+function populateModalProviders() {
+    const select = document.getElementById("slotProvider");
+    select.innerHTML = '<option value="">Select Provider</option>';
+    fetch("/providers")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.firstName} ${p.lastName}</option>`;
+            });
+        });
+}
+
+function submitCreateSlot() {
+    const date     = document.getElementById("slotDate").value;
+    const start    = document.getElementById("slotStart").value;
+    const duration = parseInt(document.getElementById("slotDuration").value);
+    const provider = document.getElementById("slotProvider").value;
+
+    if (!date || !start || !provider) {
+        document.getElementById("errorModal").textContent = "Please fill in all fields.";
+        return;
+    }
+
+    const [hours, minutes] = start.split(":").map(Number);
+    const endDate = new Date(0, 0, 0, hours, minutes + duration);
+    const end = `${String(endDate.getHours()).padStart(2, "0")}:${String(endDate.getMinutes()).padStart(2, "0")}`;
+
+    const payload = {
+        startTime:  `${date}T${start}:00`,
+        endTime:    `${date}T${end}:00`,
+        providerId: provider
+    };
+
+    fetch("/slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to create slot");
+        return res.text();
+    })
+    .then(msg => {
+        showToast(msg || "Slot created successfully!");
+        closeCreateSlotModal();
+        fetchSlots();
+    })
+    .catch(err => {
+        console.error("Create slot failed:", err);
+        document.getElementById("errorModal").textContent = "Error: Failed to create slot. Please try again";
+    });
+}
+
+// Close modal on overlay click
+document.getElementById("createSlotModal").addEventListener("click", function (e) {
+    if (e.target === this) closeCreateSlotModal();
+});

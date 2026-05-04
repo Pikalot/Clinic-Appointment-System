@@ -7,6 +7,7 @@
         <link rel="stylesheet" th:href="@{/css/appointment.css}">
         <link rel="stylesheet" th:href="@{/css/navbar.css}">
         <link rel="stylesheet" th:href="@{/css/footer.css}">
+        <link rel="stylesheet" th:href="@{/css/utils.css}">
     </head>
 
     <body>
@@ -86,6 +87,8 @@
                         <option value="120">2 hours</option>
                         <option value="180">3 hours</option>
                     </select>
+
+                    <div id="errorModal" class="modal-error"></div>
                 </div>
 
                 <div class="modal-footer">
@@ -110,6 +113,8 @@
                         <span>Fee</span>
                     </div>
                     <div class="service-options"></div>
+    
+                    <div id="errorSVModal" class="modal-error"></div>
                 </div>
 
                 <div class="modal-footer">
@@ -118,6 +123,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="toast" class="toast"></div>
 
         <script src="/js/sessions.js"></script>
         <script src="/js/utils.js"></script>
