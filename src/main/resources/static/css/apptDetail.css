@@ -113,7 +113,7 @@ main {
     text-align: center;
 }
 
-.btn-secondary {
+.btn-returnToAppt {
     background: white;
     color: #020945;
     border: 2px solid #020945;
@@ -142,7 +142,7 @@ main {
 
 .btn-primary:hover,
 .btn-ghost:hover,
-.btn-secondary:hover { 
+.btn-returnToAppt:hover { 
     border-color: #aaa; 
     background: var(--teal); 
     color: white;
