@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-      <meta charset="UTF-8" />
-      <title>Appointment Confirmed</title>
-      <link rel="stylesheet" th:href="@{/css/global.css}">
-      <link rel="stylesheet" th:href="@{/css/navbar.css}">
-      <link rel="stylesheet" th:href="@{/css/footer.css}">
-      <link rel="stylesheet" th:href="@{/css/apptDetail.css}">
-  </head>
-  
-  <body>
-      <!--NAVBAR-->
-      <div th:replace="fragments/navbar :: navbar"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Appointment Confirmed</title>
+        <link rel="stylesheet" th:href="@{/css/global.css}">
+        <link rel="stylesheet" th:href="@{/css/navbar.css}">
+        <link rel="stylesheet" th:href="@{/css/footer.css}">
+        <link rel="stylesheet" th:href="@{/css/apptDetail.css}">
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
 
-      <main>
+    <body>
+        <!--NAVBAR-->
+        <div th:replace="fragments/navbar :: navbar"></div>
+
+        <main th:data-mrn="${apptMrn}">
         <div class="confirmation-header">
             <div class="checkmark">✓</div>
             <h1>Appointment Detail</h1>
@@ -60,7 +61,7 @@
                     👨‍⚕️<span 
                         th:text="${appt.availableSlot.provider.title + '. ' + appt.availableSlot.provider.lastName}">
                     </span>
-                    <span th:text="${'(' + appt.availableSlot.provider.type} + ')'"></span>
+                    <span th:text="${'(' + appt.availableSlot.provider.type + ')'}"></span>
                 </div>
                 <div class="appt-clinic">
                     🏥<span th:text="${appt.availableSlot.clinic.nameAndAddress}"></span>
@@ -70,12 +71,25 @@
                 </div>
             </div>
         </div>
-      </main>
+        </main>
 
-      <!-- FOOTER -->
-      <div th:replace="/fragments/footer :: footer"></div>
+        <!-- FOOTER -->
+        <div th:replace="/fragments/footer :: footer"></div>
 
-      <script src="/js/sessions.js"></script>
-      <script src="/js/auth.js"></script>
-  </body>
+        <script src="/js/sessions.js"></script>
+        <script>
+            if (!role) {
+                window.location.href = "/";
+            }
+
+            // if patient, verify MRN matches
+            if (role === "Patient") {
+                const apptMrn = document.querySelector("main").dataset.mrn;
+                if (mrn !== apptMrn) {
+                    window.location.href = "/";
+                }
+            }
+        </script>
+        <script src="/js/auth.js"></script>
+</body>
 </html>
