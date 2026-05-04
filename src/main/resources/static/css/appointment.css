@@ -39,6 +39,12 @@ h2 {
   max-width: 350px;
 }
 
+.appointment-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 .appointment-card strong {
   display: block;
   margin-bottom: 20px;

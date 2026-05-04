@@ -124,6 +124,33 @@
             </div>
         </div>
 
+        <!-- BOOKING CONFIRMATION MODAL -->
+        <div id="confirmationModal" style="display:none" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>Appointment Confirmed ✓</h3>
+                </div>
+
+                <div class="modal-body">
+                    <div id="confirmationDetails"></div>
+                    <p>Hi <span id="confirmPatientName"></span>,
+                        <br>
+                    <br>Your appointment has been confirmed.
+                        <br>
+                    <br>
+                        You may check in 30 minutes before your appointment time.
+                        If you need to reschedule, please contact us at appt@email.com.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button onclick="alert('Add to Calendar — coming soon!')" class="btn-cancel">Add to Calendar</button>
+<!--                    <button onclick="alert('Book another — coming soon!')" class="btn-cancel">Book Another</button>-->
+                    <button onclick="closeConfirmationModal()" class="btn-cancel">Book Another</button>
+                </div>
+            </div>
+        </div>
+
         <div id="toast" class="toast"></div>
 
         <script src="/js/sessions.js"></script>

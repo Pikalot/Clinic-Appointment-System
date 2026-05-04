@@ -48,15 +48,17 @@ function renderHelper(data) {
     data.forEach(appt => {
         container.innerHTML += `
             <div class="appointment-card">
-                <div class="appt-date">
-                    📅 ${formatDate(appt.availableSlot.startTime)}
-                </div>
-                <strong>
-                    🕐 ${formatTime(appt.availableSlot.startTime, appt.availableSlot.endTime)}
-                    — ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
-                </strong>
-                <p>👤 ${appt.patient.firstName} ${appt.patient.lastName}</p>
-                <p>🏥 ${appt.service} — <span class="status-${appt.status.toLowerCase()}">${appt.status}</span></p>
+                <a href="/appointment/${appt.id}">
+                    <div class="appt-date">
+                        📅 ${formatDate(appt.availableSlot.startTime)}
+                    </div>
+                    <strong>
+                        🕐 ${formatTime(appt.availableSlot.startTime, appt.availableSlot.endTime)}
+                        — ${appt.availableSlot.provider.title}. ${appt.availableSlot.provider.lastName}
+                    </strong>
+                    <p>👤 ${appt.patient.firstName} ${appt.patient.lastName}</p>
+                    <p>🏥 ${appt.service} — <span class="status-${appt.status.toLowerCase()}">${appt.status}</span></p>
+                </a>    
             </div>
         `;
     });

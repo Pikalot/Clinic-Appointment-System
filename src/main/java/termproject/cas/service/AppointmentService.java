@@ -36,9 +36,9 @@ public class AppointmentService {
         return apptRepo.findByMRN(mRN);
     }
 
-//    public Appointment addAppointment(Appointment appt) {
-//        return apptRepo.save(appt);
-//    }
+    public Optional<Appointment> getAppointmentById(Long apptId) {
+        return apptRepo.findById(apptId);
+    }
 
     @Transactional
     public void bookAppointment(BookingRequest request) {

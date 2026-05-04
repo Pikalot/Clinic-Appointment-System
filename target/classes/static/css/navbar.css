@@ -42,7 +42,8 @@ nav {
 
 .nav-links {
     display: flex;
-    align-items: center;
+    margin-left: auto;
+    padding-right: 2.5rem;
     gap: 2.5rem;
     list-style: none;
 }
@@ -51,7 +52,7 @@ nav {
     text-decoration: none;
     color: var(--navy);
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 1.25rem;
     letter-spacing: 0.02em;
     position: relative;
     transition: color 0.2s;

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+      <meta charset="UTF-8" />
+      <title>Appointment Confirmed</title>
+      <link rel="stylesheet" th:href="@{/css/global.css}">
+      <link rel="stylesheet" th:href="@{/css/navbar.css}">
+      <link rel="stylesheet" th:href="@{/css/footer.css}">
+      <link rel="stylesheet" th:href="@{/css/apptDetail.css}">
+  </head>
+  
+  <body>
+      <!--NAVBAR-->
+      <div th:replace="fragments/navbar :: navbar"></div>
+
+      <main>
+        <div class="confirmation-header">
+            <div class="checkmark">✓</div>
+            <h1>Appointment Detail</h1>
+            <p>You're all set! See you soon.</p>
+        </div>
+
+        <div class="confirmation-layout">
+            <!-- LEFT — message + buttons -->
+            <div>
+                <div class="notice-box">
+                    Hi <strong th:text="${appt.patient.firstName}"></strong>, 
+                    <br>
+                    <br>Your appointment has been scheduled.
+                    <br>
+                    <br>You may check in <strong>30 minutes</strong> before your appointment time.
+                    If you need to reschedule, please contact us at
+                    <a href="mailto:appt@email.com">appt@email.com</a>.
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="alert('Add to Calendar — coming soon!')">
+                        📆 Add to Calendar
+                    </button>
+                    <a href="/bookappointment" class="btn-secondary">
+                        Book Another Appointment
+                    </a>
+                    <a href="/" class="btn-ghost">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- RIGHT — appointment detail -->
+            <div class="appt-card">
+                <div class="appt-label">Appointment Detail</div>
+                <div class="appt-time">
+                    📅 <span th:text="${#temporals.format(appt.availableSlot.startTime, 'MMM dd, yyyy')}"></span>
+                    &nbsp;·&nbsp;
+                    🕐 <span th:text="${#temporals.format(appt.availableSlot.startTime, 'hh:mm a')}"></span>
+                    –
+                    <span th:text="${#temporals.format(appt.availableSlot.endTime, 'hh:mm a')}"></span>
+                </div>
+                <div class="appt-doctor">
+                    👨‍⚕️<span 
+                        th:text="${appt.availableSlot.provider.title + '. ' + appt.availableSlot.provider.lastName}">
+                    </span>
+                    <span th:text="${'(' + appt.availableSlot.provider.type} + ')'"></span>
+                </div>
+                <div class="appt-clinic">
+                    🏥<span th:text="${appt.availableSlot.clinic.nameAndAddress}"></span>
+                </div>
+                <div class="appt-service">Service: <span th:text="${appt.service}"></span>
+                    &nbsp;·&nbsp; Status: <span th:text="${appt.status}"></span>
+                </div>
+            </div>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <div th:replace="/fragments/footer :: footer"></div>
+
+      <script src="/js/sessions.js"></script>
+      <script src="/js/auth.js"></script>
+  </body>
+</html>

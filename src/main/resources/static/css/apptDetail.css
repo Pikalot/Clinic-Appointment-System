@@ -1,0 +1,155 @@
+main {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 80px 20px;
+}
+
+.confirmation-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.confirmation-header .checkmark {
+    width: 64px;
+    height: 64px;
+    background: #12c7b7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2rem;
+    color: white;
+}
+
+.confirmation-header h1 {
+    font-size: 1.8rem;
+    color: #111;
+    margin: 0;
+}
+
+.confirmation-header p {
+    color: #666;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+}
+
+/* ── TWO COLUMN LAYOUT ── */
+.confirmation-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.appt-card {
+    background: #020945;
+    color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.appt-card .appt-label {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    margin-bottom: 0.75rem;
+}
+
+.appt-card .appt-time {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.appt-card .appt-doctor {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+    opacity: 0.9;
+}
+
+.appt-card .appt-clinic {
+    font-size: 1.2rem;
+    opacity: 0.7;
+}
+
+.appt-card .appt-service {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 1.1rem;
+    opacity: 0.85;
+}
+
+.notice-box {
+    background: #f0fdf4;
+    border-left: 4px solid #12c7b7;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.btn-primary {
+    background: #020945;
+    color: white;
+    border: none;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-secondary {
+    background: white;
+    color: #020945;
+    border: 2px solid #020945;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-ghost {
+    background: none;
+    color: #666;
+    border: 2px solid #ddd;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary:hover,
+.btn-ghost:hover,
+.btn-secondary:hover { 
+    border-color: #aaa; 
+    background: var(--teal); 
+    color: white;
+}
+
+@media (max-width: 700px) {
+    .confirmation-layout {
+        grid-template-columns: 1fr;
+    }
+}

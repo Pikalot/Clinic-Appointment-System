@@ -27,7 +27,7 @@ function sendBookingRequest(slotId, serviceId) {
             showToast(text, "error");
             return;
         }
-        showToast(text);
+        openConfirmationModal();
         renderAppointments();
         fetchSlots();
     })
@@ -37,5 +37,14 @@ function sendBookingRequest(slotId, serviceId) {
     });
 }
 
+function openConfirmationModal() {
+    document.getElementById("confirmPatientName").textContent =
+        sessionStorage.getItem("userFirstName") || "there";
+    document.getElementById("confirmationModal").style.display = "flex";
+}
+
+function closeConfirmationModal() {
+    document.getElementById("confirmationModal").style.display = "none";
+}
 
 
