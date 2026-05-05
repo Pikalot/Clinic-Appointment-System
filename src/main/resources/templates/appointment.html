@@ -8,6 +8,7 @@
         <link rel="stylesheet" th:href="@{/css/footer.css}">
         <link rel="stylesheet" th:href="@{/css/apptDetail.css}">
         <link rel="stylesheet" th:href="@{/css/style.css}">
+        <link rel="stylesheet" th:href="@{/css/utils.css}">"
     </head>
 
     <body>
@@ -41,6 +42,15 @@
                     <a href="/bookappointment" class="btn-returnToAppt">
                         Book Another Appointment
                     </a>
+                    <!-- <a href="/appointments/{apptId}/cancel" class="btn-returnToAppt">
+                        Cancel Appointment
+                    </a> -->
+                    <button id="cancelApptBtn" 
+                            th:class="${appt.status.toLowerCase() == 'cancelled'} ? 'btn-delete btn-disabled' : 'btn-delete'"
+                            th:disabled="${appt.status.toLowerCase() == 'cancelled'}"
+                            th:onclick="'deleteAppt(' + ${appt.id} + ')'">
+                        Cancel Appointment
+                    </button>
                     <a href="/" class="btn-ghost">
                         Back to Home
                     </a>
@@ -76,6 +86,8 @@
         <!-- FOOTER -->
         <div th:replace="/fragments/footer :: footer"></div>
 
+        <div id="toast" class="toast"></div>
+
         <script src="/js/sessions.js"></script>
         <script>
             if (!role) {
@@ -91,5 +103,7 @@
             }
         </script>
         <script src="/js/auth.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/appointments.js"></script>
 </body>
 </html>

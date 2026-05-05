@@ -35,4 +35,15 @@ public class AppointmentController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{apptId}/cancel")
+    public ResponseEntity<?> cancelAppt(@PathVariable Long apptId) {
+        try {
+            service.cancelAppt(apptId);
+            return ResponseEntity.ok("Appointment cancelled");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(409).body("Conflict! Appointment was modified. Please try again later.");
+        }
+    }
 }

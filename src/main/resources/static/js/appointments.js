@@ -45,7 +45,10 @@ function renderAppointments() {
 
 function renderHelper(data) {
     const container = document.getElementById("appointments");
+
     data.forEach(appt => {
+        const isScheduled = appt.status.toLowerCase() === 'scheduled';
+
         container.innerHTML += `
             <div class="appointment-card">
                 <a href="/appointment/${appt.id}">
@@ -58,8 +61,39 @@ function renderHelper(data) {
                     </strong>
                     <p>👤 ${appt.patient.firstName} ${appt.patient.lastName}</p>
                     <p>🏥 ${appt.service} — <span class="status-${appt.status.toLowerCase()}">${appt.status}</span></p>
-                </a>    
+                </a>
+                <button 
+                    class="btn-delete" 
+                    onclick="${isScheduled ? `deleteAppt(${appt.id})` : ''}"
+                    ${isScheduled ? '' : 'disabled'}
+                >Cancel Appointment</button>
             </div>
         `;
+    });
+}
+
+function deleteAppt(apptId) {
+    if (!confirm("Are you sure you want to cancel this appointment?")) return;
+
+    fetch(`/appointments/${apptId}/cancel`, {
+        method: "PUT"
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to cancel");
+        return res.text();
+    })
+    .then(msg => {
+        if (window.location.pathname.startsWith("/appointment/")) {
+            showToast(msg);
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showToast(msg);
+            fetchSlots();
+            renderAppointments();
+        }
+    })
+    .catch(err => {
+        console.error("Delete failed:", err);
+        showToast("Failed to cancel appointment.", "error");
     });
 }

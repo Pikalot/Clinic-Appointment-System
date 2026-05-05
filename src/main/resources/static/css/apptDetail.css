@@ -113,7 +113,8 @@ main {
     text-align: center;
 }
 
-.btn-returnToAppt {
+.btn-returnToAppt,
+.btn-delete {
     background: white;
     color: #020945;
     border: 2px solid #020945;
@@ -140,9 +141,17 @@ main {
     text-align: center;
 }
 
+.btn-delete:disabled {
+    background: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .btn-primary:hover,
 .btn-ghost:hover,
-.btn-returnToAppt:hover { 
+.btn-returnToAppt:hover,
+.btn-delete:hover:not(:disabled) { 
     border-color: #aaa; 
     background: var(--teal); 
     color: white;

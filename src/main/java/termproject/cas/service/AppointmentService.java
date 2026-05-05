@@ -3,6 +3,7 @@ package termproject.cas.service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 import termproject.cas.assembler.NotificationAssembler;
 import termproject.cas.model.*;
@@ -19,8 +20,10 @@ public class AppointmentService {
     private final SlotRepository slotRepo;
     private final PatientRepository patientRepo;
     private final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
-    private final AtomicInteger failureCount = new AtomicInteger(0);
-    private final AtomicInteger successCount = new AtomicInteger(0);
+    private final AtomicInteger failureCreateCount = new AtomicInteger(0);
+    private final AtomicInteger successBookingCount = new AtomicInteger(0);
+    private final AtomicInteger failureCancelCount = new AtomicInteger(0);
+    private final AtomicInteger successCancelCount = new AtomicInteger(0);
 
     public AppointmentService(AppointmentRepository apptRepo, SlotRepository slotRepo, PatientRepository patientRepo) {
         this.apptRepo = apptRepo;
@@ -41,6 +44,62 @@ public class AppointmentService {
     }
 
     @Transactional
+    public ResponseEntity<?> cancelAppt(@PathVariable Long apptId) {
+        // Log if successfully receives a request
+        logger.info("Appointment cancel request received: apptId={}", apptId);
+
+        // 1. Find the appointment
+        Optional<Appointment> appt = apptRepo.findById(apptId);
+        if (appt.isEmpty()) {
+            failureCancelCount.incrementAndGet();
+            logger.warn("Appointment not found: apptId={}", apptId);
+            throw new RuntimeException("Appointment not found");
+        }
+
+        // 2. Update appointment status to cancel
+        Appointment appointment = appt.get();
+        if (!appointment.getStatus().equals("Scheduled")) {
+            failureCancelCount.incrementAndGet();
+            logger.warn("Appointment is not scheduled: apptId={}", apptId);
+            throw new RuntimeException("Appointment is not scheduled");
+        }
+
+        appointment.setStatus("Cancelled");
+        boolean updatedAppt = apptRepo.update(appointment);
+        if (!updatedAppt) {
+            failureCancelCount.incrementAndGet();
+            logger.warn("Updating conflict detected: apptId={}", apptId);
+            throw new RuntimeException("Updating conflict detected. Please restart the transaction.");
+        }
+
+        // 3. Update slot status to available
+        Long slotId = appointment.getAvailableSlot().getId();
+        Optional<Slot> freshSlot = slotRepo.findById(slotId);
+        if (freshSlot.isEmpty()) {
+            failureCancelCount.incrementAndGet();
+            logger.warn("No valid slot in the appointment: apptId={}", apptId);
+            throw new RuntimeException("No valid slot in the appointment");
+        }
+
+        Slot slot = freshSlot.get();
+        slot.setStatus("Available");
+        boolean updatedSlot = slotRepo.update(slot);
+        if (!updatedSlot) {
+            failureCancelCount.incrementAndGet();
+            logger.warn("Updating slot conflict detected: apptId={}, slotId={}", appt, slot.getId());
+            throw new RuntimeException("Updating slot conflict detected. Please restart the transaction.");
+        }
+
+        successCancelCount.incrementAndGet();
+        // INFO: successful booking
+        logger.info("Appointment cancelled successfully: apptId={}, slotId={}",
+                apptId,
+                slot.getId());
+
+        return ResponseEntity.ok("Appointment cancelled");
+    }
+
+    @Transactional
     public void bookAppointment(BookingRequest request) {
         long mrn = request.getMrn();
         long slotId = request.getSlotId();
@@ -53,27 +112,27 @@ public class AppointmentService {
 
         Optional<Patient> patient = patientRepo.findByMRN(mrn);
         if (patient.isEmpty()) {
-            failureCount.incrementAndGet();
+            failureCreateCount.incrementAndGet();
             logger.warn("Patient not found: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Patient not found");
         }
 
         Optional<Slot> slot = slotRepo.findById(slotId);
         if (slot.isEmpty()) {
-            failureCount.incrementAndGet();
+            failureCreateCount.incrementAndGet();
             logger.warn("Slot not found: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Slot not found");
         }
 
         Slot sl = slot.get();
         if (sl.getStatus().equals("Taken")) {
-            failureCount.incrementAndGet();
+            failureCreateCount.incrementAndGet();
             // WARN: slot already taken or booking conflict
             logger.warn("Slot is not available: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Slot is not available");
         }
         if (sl.getStartTime().isBefore(currentTime)) {
-            failureCount.incrementAndGet();
+            failureCreateCount.incrementAndGet();
             // WARN: slot is stale
             logger.warn("Slot is expired: mrn={}, slotID={}, startDate={}, currentTime={}",
                 mrn, slotId, slot.get().getStartTime(), currentTime);
@@ -86,7 +145,7 @@ public class AppointmentService {
 
         // 2. If another user already changed the slot, reject transaction
         if (!updated) {
-            failureCount.incrementAndGet();
+            failureCreateCount.incrementAndGet();
             logger.warn("Booking conflict detected: mrn={}, slotId={}", mrn, slotId);
             throw new RuntimeException("Booking conflict detected. Please restart the transaction.");
         }
@@ -102,11 +161,11 @@ public class AppointmentService {
         // 4. Insert appointment only if slot update succeeded
         boolean success = apptRepo.insert(appt);
         if (!success) {
-            failureCount.incrementAndGet();
+            failureCreateCount.incrementAndGet();
             logger.warn("Writing appointment to database failed: mrn={}, slotId={}",
                     mrn, slotId);
         }
-        successCount.incrementAndGet();
+        successBookingCount.incrementAndGet();
         // INFO: successful booking
         logger.info("Appointment booked successfully: mrn={}, slotId={}",
                 mrn,
@@ -146,12 +205,12 @@ public class AppointmentService {
     }
 
     // Returns the number of failed booking attempts
-    public int getFailureCount() {
-        return failureCount.get();
+    public int getFailureCreateCount() {
+        return failureCreateCount.get();
     }
 
     // Returns the number of successful bookings
-    public int getSuccessCount() {
-        return successCount.get();
+    public int getSuccessBookingCount() {
+        return successBookingCount.get();
     }
 }
