@@ -1,5 +1,6 @@
 package termproject.cas.controller;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import java.util.Map;
@@ -7,11 +8,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/health")
 public class HealthController {
+    private final JdbcTemplate jdbcTemplate;
+
+    public HealthController(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @GetMapping
     public Map<String, String> health() {
-        // Implement this code after integrated to real DB
-        // boolean dbOk = checkDatabase();
-        boolean dbOk = false; // TO DO: remove this code once DB is integrated
+        boolean dbOk = checkDatabase();
         String dBStatus = dbOk ? "CONNECTED" : "DISCONNECTED";
         boolean notification = checkNotification();
         String notificationStatus = notification ? "CONNECTED" : "DISCONNECTED";
@@ -50,6 +55,16 @@ public class HealthController {
             return true; // service responded
         } catch (Exception e) {
             return false; // service unreachable or failed
+        }
+    }
+
+    private boolean checkDatabase() {
+        try {
+            jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
         }
     }
 }
