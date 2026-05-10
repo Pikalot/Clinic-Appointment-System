@@ -89,6 +89,27 @@ The application will start at **http://localhost:8080**
  
 ---
 
+## Mock Users Authentications
+
+### Providers
+| Providers | Auth     | 
+|-----------|----------|
+| provider1 | provider |
+| provider2 | provider |
+| provider3 | provider |
+| provider4 | provider |
+
+### Patients
+
+| Patients  | Auth     | 
+|-----------|----------|
+| patient1  | patient  |
+| patient2  | patient  |
+| patient3  | patient  |
+| patient4  | patient  |
+
+---
+
 ## Key Endpoints
 
 | Method | Endpoint | Description |
